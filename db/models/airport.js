@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('./index');
 
-const Airport = db.define('airport', {
+const Airport = db.define('airports', {
     ident: {
         type: Sequelize.STRING
     },

@@ -15,7 +15,8 @@ app.use(bodyParser.json());
 app.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist')));
 app.use('/jquery', express.static(path.join(__dirname, '/node_modules/jquery/dist')));
 
-// app.use('/api', require('./server/api'));
+// direct request URIs for '/api' to './api' directory for processing
+app.use('/api',require('./server/api'));
 
 app.use(function (err, req, res, next) {
 	console.error(err.stack);
