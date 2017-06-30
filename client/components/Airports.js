@@ -2,6 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import Autocomplete from 'react-predictive-input';
 
+import geolib from 'geolib';
+
 const table = {
   display: 'table',
   textAlign: 'center',
@@ -39,21 +41,49 @@ class Airports extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidUpdate() {
-    let airportNames = this.props.airports;
-
-    let array = airportNames.map(airport => {
-      return airport.name;
-    })
-
-  }
-
   handleSubmit(evt) {
     evt.preventDefault();
+
+    let [departAirport] = this.props.airports.filter(airport => {
+      if (airport.name === this.state.depart) {
+        return airport;
+      }
+    });
+
+    let departCoors = {
+      latitude: departAirport.latitude_deg,
+      longitude: departAirport.longitude_deg
+    }
+
+    let [arriveAirport] = this.props.airports.filter(airport => {
+      if (airport.name === this.state.arrive) {
+        return airport;
+      }
+    });
+
+    let arriveCoors = {
+      latitude: arriveAirport.latitude_deg,
+      longitude: arriveAirport.longitude_deg
+    };
+
+    let distance = geolib.getDistance(departCoors, arriveCoors) * 0.000539957;
+
+    this.setState({
+      distance: distance
+    });
+
   }
 
-  onItemSelected(value){
-    console.log(`${value} was selected`);
+  onDepartSelected(value){
+    this.setState({
+      depart: value
+    });
+  }
+
+  onArriveSelected(value){
+    this.setState({
+      arrive: value
+    });
   }
 
   render() {
@@ -69,7 +99,7 @@ class Airports extends React.Component {
             placeholder="e.g., John F. Kennedy"
             data={this.props.airports && this.props.airports.map(airport => airport.name)}
             style={predictiveDropdownStyles}
-            onSelected={this.onItemSelected.bind(this)} 
+            onSelected={this.onDepartSelected.bind(this)} 
             ></Autocomplete>
 
           </div>
@@ -80,13 +110,13 @@ class Airports extends React.Component {
             placeholder="e.g., Seattle Tacoma"
             data={this.props.airports && this.props.airports.map(airport => airport.name)}
             style={predictiveDropdownStyles}
-            onSelected={this.onItemSelected.bind(this)} 
+            onSelected={this.onArriveSelected.bind(this)} 
             ></Autocomplete>
           </div>
         </div>  
         </form>
         <br/>
-        <button type="submit">SUBMIT</button>
+        <button type="submit" onClick={this.handleSubmit}>SUBMIT</button>
         <br/>
         <hr/>
       </div>
@@ -96,13 +126,8 @@ class Airports extends React.Component {
 
 import {connect} from 'react-redux'
 
-// export default Airports
-
-// action creators
-import {getAirports} from '../reducers/airports'
-
 export default connect(
   ({airports}) => ({
     airports: airports
-  }), {getAirports},
+  }), {},
 )(Airports)
