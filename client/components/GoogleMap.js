@@ -1,10 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 
-import Airports from './Airports'
-import GoogleMap from './GoogleMap'
+const mapStyle = {
+  height: "100%"
+};
 
-class App extends React.Component {
+class GoogleMap extends React.Component {
 
   constructor(props) {
     super(props);
@@ -14,13 +15,13 @@ class App extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentWillMount() {
-    this.props.getAirports();
-  }
-
   // handlePubClick() {
   //   this.props.findPubsByName('');
   // }
+
+  componentDidMount() {
+
+  }
 
   handleSubmit() {
 
@@ -29,8 +30,8 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Airports/>
-        <GoogleMap/>
+        <h1>THIS WILL BE A MAP</h1>
+        <div id="map" style={mapStyle}></div>
       </div>
     )
   }
@@ -38,11 +39,11 @@ class App extends React.Component {
 
 import {connect} from 'react-redux'
 
-// export default App
+export default GoogleMap
 
 // action creators
-import {getAirports} from '../reducers/airports'
+// import {findPubsByName} from 'APP/app/reducers/pubs/pubSearchResults'
 
-export default connect(
-  ({}) => ({}), {getAirports},
-)(App)
+// export default connect(
+//   ({}) => ({}), {},
+// )(App)

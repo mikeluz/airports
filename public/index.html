@@ -6,6 +6,17 @@
   </head>
   <body>
     <div id="app"></div>
-    <script async defer src="/bundle.js"></script>    
+    <script async defer src="/bundle.js"></script>
+    <script async defer>
+    var map;
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: -34.397, lng: 150.644},
+        zoom: 8
+      });
+    }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJJ4zQXgdDc2gJfyGy746iBpoGBgSbdp8&callback=initMap"
+    async defer></script> 
   </body>
 </html> 

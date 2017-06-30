@@ -1,5 +1,40 @@
+html {
+	background-color: rgba(101, 209, 255, 0.4);
+}
+
 #app {
 	font-family: 'Roboto', sans-serif;
 	text-align: center;
 	margin: auto;
 }
+
+input {
+	width: 500px;
+}
+
+ul {
+	font-family: 'Roboto', sans-serif;
+	list-style: none;
+	font-size: 8pt;
+	width: 50%;
+	text-align: left;
+	position: absolute;
+	margin: auto;
+	background-color: rgba(226, 245, 253, 0.8);
+}
+
+li {
+	padding: 2px;
+}
+
+li:hover {
+	background-color: yellow;
+}
+
+#list-arrive, #list-depart {
+	width: 420px;
+	margin: 0px;
+	cursor: pointer;
+}
+
+@import "node_modules/react-predictive-input/dist/styles.css";

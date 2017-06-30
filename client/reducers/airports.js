@@ -1,10 +1,9 @@
 import axios from 'axios'
 
 const reducer = (state=null, action) => {
-	// console.log("action", action);
   switch (action.type) {
   case SET_AIRPORTS:
-    return action.users
+    return action.airports
   }
   return state
 }
