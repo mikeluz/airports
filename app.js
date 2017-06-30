@@ -5,20 +5,23 @@ var morgan = require('morgan');
 var bodyParser = require('body-parser');
 
 var path = require('path');
-module.exports = app;
+module.exports = app
 
-app.use(morgan('dev'));
-app.use(express.static(path.join(__dirname, './public')));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json()); 
+.use(morgan('dev'))
+.use(express.static(path.join(__dirname, './public')))
+.use(bodyParser.urlencoded({ extended: false }))
+.use(bodyParser.json()) 
 
-app.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist')));
-app.use('/jquery', express.static(path.join(__dirname, '/node_modules/jquery/dist')));
+.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist')))
+.use('/jquery', express.static(path.join(__dirname, '/node_modules/jquery/dist')))
 
 // direct request URIs for '/api' to './api' directory for processing
-app.use('/api',require('./server/api'));
+.use('/api',require('./server/api'))
 
-app.use(function (err, req, res, next) {
+// Send index.html for anything else.
+.get('/*', (_, res) => res.sendFile(resolve(__dirname, '..', 'public', 'index.html')))
+
+.use(function (err, req, res, next) {
 	console.error(err.stack);
 	res.status(500).send(err.message);
 });
