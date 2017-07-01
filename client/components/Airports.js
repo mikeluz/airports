@@ -57,10 +57,19 @@ class Airports extends React.Component {
       });
     }
 
+    document.addEventListener('keypress', (evt) => {
+        if (evt.which === 13 && !this.state.badInput) {
+          this.plotRoute();
+        }
+      });
+
   }
 
   plotRoute(evt) {
-    // evt.preventDefault();
+
+    if (evt) {
+      evt.preventDefault();
+    }
 
     if (!this.state.depart || !this.state.arrive || (this.state.depart === this.state.arrive)) {
       this.setState({
@@ -147,6 +156,7 @@ class Airports extends React.Component {
       showTryAgain: true,
       depart: "",
       arrive: "",
+      badInput: false
     });
 
     let clearInputs = [].slice.call(document.getElementsByTagName('input'));
@@ -159,16 +169,17 @@ class Airports extends React.Component {
   }
 
   onDepartSelected(value){
-    console.log("DEPART");
     this.setState({
-      depart: value
+      depart: value,
+      bandInput: false
     });
   }
 
   onArriveSelected(value){
-    console.log("ARRIVE");
+    console.log("arrive: ", value);
     this.setState({
-      arrive: value
+      arrive: value,
+      badInput: false
     });
   }
 

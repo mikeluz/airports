@@ -26813,13 +26813,21 @@ var Airports = function (_React$Component) {
           evt.target.style.backgroundColor = "white";
         });
       }
+
+      document.addEventListener('keypress', function (evt) {
+        if (evt.which === 13 && !_this2.state.badInput) {
+          _this2.plotRoute();
+        }
+      });
     }
   }, {
     key: 'plotRoute',
     value: function plotRoute(evt) {
       var _this3 = this;
 
-      // evt.preventDefault();
+      if (evt) {
+        evt.preventDefault();
+      }
 
       if (!this.state.depart || !this.state.arrive || this.state.depart === this.state.arrive) {
         this.setState({
@@ -26906,7 +26914,8 @@ var Airports = function (_React$Component) {
         this.setState({
           showTryAgain: true,
           depart: "",
-          arrive: ""
+          arrive: "",
+          badInput: false
         });
 
         var clearInputs = [].slice.call(document.getElementsByTagName('input'));
@@ -26919,17 +26928,18 @@ var Airports = function (_React$Component) {
   }, {
     key: 'onDepartSelected',
     value: function onDepartSelected(value) {
-      console.log("DEPART");
       this.setState({
-        depart: value
+        depart: value,
+        bandInput: false
       });
     }
   }, {
     key: 'onArriveSelected',
     value: function onArriveSelected(value) {
-      console.log("ARRIVE");
+      console.log("arrive: ", value);
       this.setState({
-        arrive: value
+        arrive: value,
+        badInput: false
       });
     }
   }, {
