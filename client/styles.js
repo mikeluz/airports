@@ -3,13 +3,16 @@ const styles = {};
 styles.table = {
   display: 'table',
   textAlign: 'center',
-  margin: 'auto'
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  marginTop: '8%'
 };
 
 styles.inputStyle = {
   display: 'table-cell',
   padding: '2px',
-  margin: '2px'
+  margin: '2px',
+  zIndex: '6'
 };
 
 styles.headerStyle = {
@@ -26,6 +29,7 @@ styles.predictiveDropdownStyles = {
 };
 
 styles.inputContainerStyle = {
+  height: "100%",
   position: "absolute",
   margin: "auto",
   width: "100%",
@@ -46,6 +50,12 @@ styles.submitBtn = {
   margin: "auto",
   position: "absolute",
   display: "none"
+};
+
+styles.tryAgainStyle = {
+  padding: "10px",
+  marginTop: "15px",
+  backgroundColor: "rgba(252, 123, 42, 0.8)"
 };
 
 module.exports = styles;

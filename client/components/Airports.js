@@ -8,6 +8,12 @@ import geolib from 'geolib';
 
 import generateInfoWindow from '../info.js';
 
+const changeValue = (element, value) => {
+  const event = new Event('input', { bubbles: true });
+  element.value = value;
+  element.dispatchEvent(event);
+};
+
 class Airports extends React.Component {
 
   constructor(props) {
@@ -21,6 +27,20 @@ class Airports extends React.Component {
     };
 
     this.plotRoute = this.plotRoute.bind(this);
+  }
+
+  componentDidMount() {
+
+    let clearInputs = [].slice.call(document.getElementsByTagName('input'));
+
+    clearInputs.forEach(input => {
+      // console.log(input);
+      input.addEventListener("input", (e) => {
+        console.log(this);
+        console.log(e.target.value);
+      });
+    });
+
   }
 
   plotRoute(evt) {
@@ -91,6 +111,8 @@ class Airports extends React.Component {
       map: map
     });
 
+    document.getElementById('inputContainer').style.height = "";
+
     var hideInput = document.getElementsByTagName("form")[0];
     hideInput.style.cssText = "display: none";
 
@@ -126,6 +148,14 @@ class Airports extends React.Component {
 
     initMap();
 
+    let clearInputs = [].slice.call(document.getElementsByTagName('input'));
+
+    clearInputs.forEach(input => {
+      changeValue(input, "");
+    });
+
+    document.getElementById('inputContainer').style.height = "100%";
+
     this.setState({
       distance: 0,
       depart: "",
@@ -137,10 +167,10 @@ class Airports extends React.Component {
   render() {
     return (
       <div id="inputContainer" style={styles.inputContainerStyle}>
-        <h1 style={styles.headerStyle}>How far is it? {this.state.distance && this.state.distance} nautical miles.</h1>
+        <h1 style={styles.headerStyle}>How far is it? {(this.state.distance > 0) && ` ${this.state.distance} nautical miles.`}</h1>
         <form onSubmit={this.plotRoute}>
         <div style={styles.table}>
-          <div id="depart" style={styles.inputStyle}>
+          <div id="depart-div" style={styles.inputStyle}>
             <h2>Depart</h2>
             <Autocomplete
             id="depart"
@@ -151,7 +181,7 @@ class Airports extends React.Component {
             ></Autocomplete>
 
           </div>
-          <div id="arrive" style={styles.inputStyle}>
+          <div id="arrive-div" style={styles.inputStyle}>
             <h2>Arrive</h2>
             <Autocomplete
             id="arrive"
@@ -168,7 +198,7 @@ class Airports extends React.Component {
         </form>
         <div>
         {
-          this.state.showTryAgain && <button onClick={this.onTryAgainClick.bind(this)} id="tryAgain">Try Again</button>
+          this.state.showTryAgain && <button onClick={this.onTryAgainClick.bind(this)} id="tryAgain" style={styles.tryAgainStyle}>TRY AGAIN</button>
         }
         </div>
       </div>

@@ -10,7 +10,7 @@ class TryAgain extends React.Component {
     };
   }
 
-  onClick() {
+  onTryAgainClick() {
     var showInput = document.getElementsByTagName("form")[0];
     showInput.style.cssText = "display: unset";
 
@@ -33,7 +33,7 @@ class TryAgain extends React.Component {
     return (
       <div>
       {
-        this.state.show && <button onClick={this.onClick.bind(this)} id="tryAgain">Try Again</button>
+        this.state.show && <button onTryAgainClick={this.onClick.bind(this)} id="tryAgain">sdasdg</button>
       }
       </div>
     )
