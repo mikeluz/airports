@@ -23,7 +23,8 @@ class Airports extends React.Component {
       distance: 0,
       depart: "",
       arrive: "",
-      showTryAgain: false
+      showTryAgain: false,
+      badInput: false
     };
 
     this.plotRoute = this.plotRoute.bind(this);
@@ -39,12 +40,6 @@ class Airports extends React.Component {
           e.target.value = "";
         }
       });
-      // should submit on enter keypress
-      input.addEventListener('keypress', (evt) => {
-        if (evt.which === 13) {
-          this.plotRoute();
-        }
-      });
     });
 
     if (document.getElementById('tryAgain')) {
@@ -58,7 +53,7 @@ class Airports extends React.Component {
     }
 
     document.addEventListener('keypress', (evt) => {
-        if (evt.which === 13 && !this.state.badInput) {
+        if (evt.which === 13 && !this.state.badInput && !this.state.distance) {
           this.plotRoute();
         }
       });
@@ -66,7 +61,6 @@ class Airports extends React.Component {
   }
 
   plotRoute(evt) {
-
     if (evt) {
       evt.preventDefault();
     }
@@ -76,94 +70,85 @@ class Airports extends React.Component {
         badInput: true
       });
     } else {
-      if (this.state.badInput === true) {
-        this.setState({
-          badInput: false
-        })
-      }
 
-    let [departAirport] = this.props.airports.filter(airport => {
-      if (airport.name === this.state.depart) {
-        return airport;
-      }
-    });
-
-    let departCoors = {
-      latitude: departAirport.latitude_deg,
-      longitude: departAirport.longitude_deg
-    };
-
-    let [arriveAirport] = this.props.airports.filter(airport => {
-      if (airport.name === this.state.arrive) {
-        return airport;
-      }
-    });
-
-    let arriveCoors = {
-      latitude: arriveAirport.latitude_deg,
-      longitude: arriveAirport.longitude_deg
-    };
-
-    let distance = geolib.getDistance(departCoors, arriveCoors) * 0.000539957;
-
-    this.setState({
-      distance: distance
-    });
-
-    var departMarkerCoors = {lat: Number(departAirport.latitude_deg), lng: Number(departAirport.longitude_deg)};
-    var arriveMarkerCoors = {lat: Number(arriveAirport.latitude_deg), lng: Number(arriveAirport.longitude_deg)};
-
-    let map;
-    (function initMap() {
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 40.806862, lng: -96.681679},
-        zoom: 4
+      let [departAirport] = this.props.airports.filter(airport => {
+        if (airport.name === this.state.depart) {
+          return airport;
+        }
       });
-    }());
 
-    var departMarker = new google.maps.Marker({
-      position: departMarkerCoors
-    });
+      let departCoors = {
+        latitude: departAirport.latitude_deg,
+        longitude: departAirport.longitude_deg
+      };
 
-    var arriveMarker = new google.maps.Marker({
-      position: arriveMarkerCoors
-    });
+      let [arriveAirport] = this.props.airports.filter(airport => {
+        if (airport.name === this.state.arrive) {
+          return airport;
+        }
+      });
 
-    departMarker.setMap(map);
-    arriveMarker.setMap(map);
+      let arriveCoors = {
+        latitude: arriveAirport.latitude_deg,
+        longitude: arriveAirport.longitude_deg
+      };
 
-    let departInfo = generateInfoWindow(departAirport).open(map, departMarker);
-    let arriveInfo = generateInfoWindow(arriveAirport).open(map, arriveMarker);
+      let distance = geolib.getDistance(departCoors, arriveCoors) * 0.000539957;
+      let departMarkerCoors = {lat: Number(departAirport.latitude_deg), lng: Number(departAirport.longitude_deg)};
+      let arriveMarkerCoors = {lat: Number(arriveAirport.latitude_deg), lng: Number(arriveAirport.longitude_deg)};
 
-    // draw route using Polyline -- no "FLIGHT" travel option in directions service :(
-    var line = new google.maps.Polyline({
-      path: [
-          departMarkerCoors, 
-          arriveMarkerCoors
-      ],
-      strokeColor: "#FF0000",
-      strokeOpacity: 1.0,
-      strokeWeight: 2,
-      map: map
-    });
+      let map;
+      (function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 40.806862, lng: -96.681679},
+          zoom: 4
+        });
+      }());
 
-    document.getElementById('inputContainer').style.height = "";
+      let departMarker = new google.maps.Marker({
+        position: departMarkerCoors
+      });
 
-    var hideInput = document.getElementsByTagName("form")[0];
-    hideInput.style.cssText = "display: none";
+      let arriveMarker = new google.maps.Marker({
+        position: arriveMarkerCoors
+      });
 
-    this.setState({
-      showTryAgain: true,
-      depart: "",
-      arrive: "",
-      badInput: false
-    });
+      departMarker.setMap(map);
+      arriveMarker.setMap(map);
 
-    let clearInputs = [].slice.call(document.getElementsByTagName('input'));
+      let departInfo = generateInfoWindow(departAirport).open(map, departMarker);
+      let arriveInfo = generateInfoWindow(arriveAirport).open(map, arriveMarker);
 
-    clearInputs.forEach(input => {
-      changeValue(input, "");
-    });
+      // draw route using Polyline -- no "FLIGHT" travel option in directions service :(
+      let line = new google.maps.Polyline({
+        path: [
+            departMarkerCoors, 
+            arriveMarkerCoors
+        ],
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 2,
+        map: map
+      });
+
+      document.getElementById('inputContainer').style.height = "";
+
+      let hideInput = document.getElementsByTagName("form")[0];
+      hideInput.style.cssText = "display: none";
+
+      this.setState({
+        distance: distance,
+        showTryAgain: true,
+        depart: "",
+        arrive: "",
+        badInput: false
+      });
+
+      let clearInputs = [].slice.call(document.getElementsByTagName('input'));
+
+      clearInputs.forEach(input => {
+        changeValue(input, "");
+      });
 
     }
   }
@@ -171,12 +156,11 @@ class Airports extends React.Component {
   onDepartSelected(value){
     this.setState({
       depart: value,
-      bandInput: false
+      badInput: false
     });
   }
 
   onArriveSelected(value){
-    console.log("arrive: ", value);
     this.setState({
       arrive: value,
       badInput: false
@@ -184,7 +168,7 @@ class Airports extends React.Component {
   }
 
   onTryAgainClick() {
-    var showInput = document.getElementsByTagName("form")[0];
+    let showInput = document.getElementsByTagName("form")[0];
     showInput.style.cssText = "display: unset";
 
     let map;
@@ -201,7 +185,8 @@ class Airports extends React.Component {
 
     this.setState({
       distance: 0,
-      showTryAgain: false
+      showTryAgain: false,
+      badInput: false
     });
   }
 

@@ -26776,7 +26776,8 @@ var Airports = function (_React$Component) {
       distance: 0,
       depart: "",
       arrive: "",
-      showTryAgain: false
+      showTryAgain: false,
+      badInput: false
     };
 
     _this.plotRoute = _this.plotRoute.bind(_this);
@@ -26796,12 +26797,6 @@ var Airports = function (_React$Component) {
             e.target.value = "";
           }
         });
-        // should submit on enter keypress
-        input.addEventListener('keypress', function (evt) {
-          if (evt.which === 13) {
-            _this2.plotRoute();
-          }
-        });
       });
 
       if (document.getElementById('tryAgain')) {
@@ -26815,7 +26810,7 @@ var Airports = function (_React$Component) {
       }
 
       document.addEventListener('keypress', function (evt) {
-        if (evt.which === 13 && !_this2.state.badInput) {
+        if (evt.which === 13 && !_this2.state.badInput && !_this2.state.distance) {
           _this2.plotRoute();
         }
       });
@@ -26834,12 +26829,6 @@ var Airports = function (_React$Component) {
           badInput: true
         });
       } else {
-        if (this.state.badInput === true) {
-          this.setState({
-            badInput: false
-          });
-        }
-
         var _props$airports$filte = this.props.airports.filter(function (airport) {
           if (airport.name === _this3.state.depart) {
             return airport;
@@ -26867,11 +26856,6 @@ var Airports = function (_React$Component) {
         };
 
         var distance = _geolib2.default.getDistance(departCoors, arriveCoors) * 0.000539957;
-
-        this.setState({
-          distance: distance
-        });
-
         var departMarkerCoors = { lat: Number(departAirport.latitude_deg), lng: Number(departAirport.longitude_deg) };
         var arriveMarkerCoors = { lat: Number(arriveAirport.latitude_deg), lng: Number(arriveAirport.longitude_deg) };
 
@@ -26912,6 +26896,7 @@ var Airports = function (_React$Component) {
         hideInput.style.cssText = "display: none";
 
         this.setState({
+          distance: distance,
           showTryAgain: true,
           depart: "",
           arrive: "",
@@ -26930,13 +26915,12 @@ var Airports = function (_React$Component) {
     value: function onDepartSelected(value) {
       this.setState({
         depart: value,
-        bandInput: false
+        badInput: false
       });
     }
   }, {
     key: 'onArriveSelected',
     value: function onArriveSelected(value) {
-      console.log("arrive: ", value);
       this.setState({
         arrive: value,
         badInput: false
@@ -26962,7 +26946,8 @@ var Airports = function (_React$Component) {
 
       this.setState({
         distance: 0,
-        showTryAgain: false
+        showTryAgain: false,
+        badInput: false
       });
     }
   }, {
