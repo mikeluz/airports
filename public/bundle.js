@@ -11979,7 +11979,7 @@ styles.table = {
   textAlign: 'center',
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginTop: '8%'
+  marginTop: '14%'
 };
 
 styles.inputStyle = {
@@ -11990,34 +11990,43 @@ styles.inputStyle = {
 };
 
 styles.headerStyle = {
+  marginTop: "0px",
   marginBottom: '2px',
   padding: "5px",
   marginLeft: "auto",
   marginRight: "auto",
-  backgroundColor: "rgba(252, 123, 42, 0.8)"
+  backgroundColor: "rgba(252, 123, 42, 0.9)"
 };
 
 styles.predictiveDropdownStyles = {
   fontSize: "10pt",
-  listStyle: "none"
+  listStyle: "none",
+  width: "400px",
+  margin: "0px",
+  cursor: "pointer"
 };
 
 styles.inputContainerStyle = {
-  height: "100%",
-  position: "absolute",
+  height: "100vh",
+  position: "relative",
   margin: "auto",
   width: "100%",
   backgroundColor: "rgba(252, 123, 42, 0.1)",
-  paddingBottom: "20px",
+  // paddingBottom: "20px",
   zIndex: "5"
 };
 
 styles.mapStyle = {
-  height: "100%"
+  height: "100vh",
+  position: "absolute",
+  top: "0",
+  right: "0",
+  bottom: "0",
+  left: "0"
 };
 
 styles.mapContainerStyle = {
-  height: "900px"
+  height: "100%"
 };
 
 styles.submitBtn = {
@@ -12028,8 +12037,12 @@ styles.submitBtn = {
 
 styles.tryAgainStyle = {
   padding: "10px",
-  marginTop: "15px",
-  backgroundColor: "rgba(252, 123, 42, 0.8)"
+  backgroundColor: "white",
+  left: "180px",
+  position: "absolute",
+  border: "none",
+  top: "7px",
+  bottom: "auto"
 };
 
 module.exports = styles;
@@ -12047,10 +12060,6 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(123);
 
-var _axios = __webpack_require__(22);
-
-var _axios2 = _interopRequireDefault(_axios);
-
 var _reactRedux = __webpack_require__(35);
 
 var _store = __webpack_require__(254);
@@ -12063,16 +12072,11 @@ var _App2 = _interopRequireDefault(_App);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import TextInterface from './containers/TextInterface'
-
 (0, _reactDom.render)(_react2.default.createElement(
   _reactRedux.Provider,
   { store: _store2.default },
   _react2.default.createElement(_App2.default, null)
 ), document.getElementById('app'));
-
-// import { Router, Route, Link, IndexRoute, IndexRedirect, browserHistory, hashHistory } from 'react-router';
-// import { HashRouter, BrowserRouter } from 'react-router-dom';
 
 /***/ }),
 /* 108 */
@@ -26781,15 +26785,27 @@ var Airports = function (_React$Component) {
       var clearInputs = [].slice.call(document.getElementsByTagName('input'));
 
       clearInputs.forEach(function (input) {
-        // console.log(input);
         input.addEventListener("input", function (e) {
           if (_this2.state.showTryAgain === true) {
             e.target.value = "";
           }
-          // console.log(e.target.value);
-          // console.log("INPUT FIRED");
         });
       });
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      if (document.getElementById('tryAgain')) {
+        document.getElementById('tryAgain').addEventListener('mouseenter', function (evt) {
+          evt.target.style.cursor = "pointer";
+          evt.target.style.backgroundColor = "yellow";
+        });
+        document.getElementById('tryAgain').addEventListener('mouseleave', function (evt) {
+          evt.target.style.backgroundColor = "white";
+        });
+      }
+
+      console.log(document.getElementById('depart'));
     }
   }, {
     key: 'plotRoute',
@@ -26911,7 +26927,7 @@ var Airports = function (_React$Component) {
 
       initMap();
 
-      document.getElementById('inputContainer').style.height = "100%";
+      document.getElementById('inputContainer').style.height = "100vh";
 
       this.setState({
         distance: 0,
@@ -26921,15 +26937,18 @@ var Airports = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      // console.log("RENDER", this.state.showTryAgain);
       return _react2.default.createElement(
         'div',
         { id: 'inputContainer', style: _styles2.default.inputContainerStyle },
         _react2.default.createElement(
           'h1',
           { style: _styles2.default.headerStyle },
-          'How far is it? ',
-          this.state.distance > 0 && ' ' + this.state.distance + ' nautical miles.'
+          this.state.showTryAgain && _react2.default.createElement(
+            'button',
+            { onClick: this.onTryAgainClick.bind(this), id: 'tryAgain', style: _styles2.default.tryAgainStyle },
+            'TRY AGAIN'
+          ),
+          this.state.distance > 0 ? 'Distance is ' + this.state.distance + ' nautical miles' : 'Choose two airports to find the distance between them'
         ),
         _react2.default.createElement(
           'form',
@@ -26941,8 +26960,8 @@ var Airports = function (_React$Component) {
               'div',
               { id: 'depart-div', style: _styles2.default.inputStyle },
               _react2.default.createElement(
-                'h2',
-                null,
+                'h1',
+                { style: _styles2.default.headerStyle },
                 'Depart'
               ),
               _react2.default.createElement(_reactPredictiveInput2.default, {
@@ -26960,8 +26979,8 @@ var Airports = function (_React$Component) {
               'div',
               { id: 'arrive-div', style: _styles2.default.inputStyle },
               _react2.default.createElement(
-                'h2',
-                null,
+                'h1',
+                { style: _styles2.default.headerStyle },
                 'Arrive'
               ),
               _react2.default.createElement(_reactPredictiveInput2.default, {
@@ -26984,15 +27003,6 @@ var Airports = function (_React$Component) {
                 'SUBMIT'
               )
             )
-          )
-        ),
-        _react2.default.createElement(
-          'div',
-          null,
-          this.state.showTryAgain && _react2.default.createElement(
-            'button',
-            { onClick: this.onTryAgainClick.bind(this), id: 'tryAgain', style: _styles2.default.tryAgainStyle },
-            'TRY AGAIN'
           )
         )
       );
@@ -27125,7 +27135,8 @@ return /******/ (function(modules) { // webpackBootstrap
 				if (value !== '' || this.props.reload) {
 					this.setState({
 						value: value,
-						data: []
+						data: [],
+						selectedSuggestion: -1
 					});
 				}
 			}
@@ -28962,7 +28973,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var generateInfoWindow = function generateInfoWindow(airport) {
 
-      var contentString = "<div id=\"content\"><div id=\"siteNotice\"></div>\n      <h2 id=\"firstHeading\" class=\"firstHeading\">" + airport.name + "</h2>\n      <div id=\"bodyContent\">\n      <p><a href=" + airport.wikipedia_link + " target=\"_blank\">Wikipedia Entry For " + airport.name + "</a></p>\n      </div>\n      </div>";
+      var contentString = "<div id=\"content\" style=\"background-color: transparent\"><div id=\"siteNotice\"></div>\n      <h2 id=\"firstHeading\" class=\"firstHeading\">" + airport.name + "</h2>\n      <div id=\"bodyContent\">\n      <p><a href=" + airport.wikipedia_link + " target=\"_blank\">Wikipedia Entry For " + airport.name + "</a></p>\n      </div>\n      </div>";
 
       var infowindow = new google.maps.InfoWindow({
             content: contentString

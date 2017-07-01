@@ -34,16 +34,27 @@ class Airports extends React.Component {
     let clearInputs = [].slice.call(document.getElementsByTagName('input'));
 
     clearInputs.forEach(input => {
-      // console.log(input);
       input.addEventListener("input", (e) => {
         if (this.state.showTryAgain === true) {
           e.target.value = "";
         }
-        // console.log(e.target.value);
-        // console.log("INPUT FIRED");
       });
     });
 
+  }
+
+  componentDidUpdate() {
+    if (document.getElementById('tryAgain')) {
+      document.getElementById('tryAgain').addEventListener('mouseenter', (evt) => {
+        evt.target.style.cursor = "pointer";
+        evt.target.style.backgroundColor = "yellow";
+      });
+      document.getElementById('tryAgain').addEventListener('mouseleave', (evt) => {
+        evt.target.style.backgroundColor = "white";
+      });
+    }
+
+        console.log(document.getElementById('depart'));
   }
 
   plotRoute(evt) {
@@ -159,7 +170,7 @@ class Airports extends React.Component {
 
     initMap();
 
-    document.getElementById('inputContainer').style.height = "100%";
+    document.getElementById('inputContainer').style.height = "100vh";
 
     this.setState({
       distance: 0,
@@ -168,14 +179,15 @@ class Airports extends React.Component {
   }
 
   render() {
-    // console.log("RENDER", this.state.showTryAgain);
     return (
       <div id="inputContainer" style={styles.inputContainerStyle}>
-        <h1 style={styles.headerStyle}>How far is it? {(this.state.distance > 0) && ` ${this.state.distance} nautical miles.`}</h1>
+        <h1 style={styles.headerStyle}>{
+          this.state.showTryAgain && <button onClick={this.onTryAgainClick.bind(this)} id="tryAgain" style={styles.tryAgainStyle}>TRY AGAIN</button>
+        }{(this.state.distance > 0) ? `Distance is ${this.state.distance} nautical miles` : `Choose two airports to find the distance between them`}</h1>
         <form onSubmit={this.plotRoute}>
         <div style={styles.table}>
           <div id="depart-div" style={styles.inputStyle}>
-            <h2>Depart</h2>
+            <h1 style={styles.headerStyle}>Depart</h1>
             <Autocomplete
             id="depart"
             placeholder="e.g., John F. Kennedy"
@@ -184,10 +196,9 @@ class Airports extends React.Component {
             onSelected={this.onDepartSelected.bind(this)}
             reload={this.state.showTryAgain}
             ></Autocomplete>
-
           </div>
           <div id="arrive-div" style={styles.inputStyle}>
-            <h2>Arrive</h2>
+            <h1 style={styles.headerStyle}>Arrive</h1>
             <Autocomplete
             id="arrive"
             placeholder="e.g., Seattle Tacoma"
@@ -202,11 +213,6 @@ class Airports extends React.Component {
         }</div>
         </div>  
         </form>
-        <div>
-        {
-          this.state.showTryAgain && <button onClick={this.onTryAgainClick.bind(this)} id="tryAgain" style={styles.tryAgainStyle}>TRY AGAIN</button>
-        }
-        </div>
       </div>
     )
   }

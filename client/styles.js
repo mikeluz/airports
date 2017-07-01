@@ -5,7 +5,7 @@ styles.table = {
   textAlign: 'center',
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginTop: '8%'
+  marginTop: '14%'
 };
 
 styles.inputStyle = {
@@ -16,34 +16,43 @@ styles.inputStyle = {
 };
 
 styles.headerStyle = {
+  marginTop: "0px",
   marginBottom: '2px',
   padding: "5px",
   marginLeft: "auto",
   marginRight: "auto",
-  backgroundColor: "rgba(252, 123, 42, 0.8)"
+  backgroundColor: "rgba(252, 123, 42, 0.9)"
 };
 
 styles.predictiveDropdownStyles = {
   fontSize: "10pt",
   listStyle: "none",
+  width: "400px",
+  margin: "0px",
+  cursor:"pointer",
 };
 
 styles.inputContainerStyle = {
-  height: "100%",
-  position: "absolute",
+  height: "100vh",
+  position: "relative",
   margin: "auto",
   width: "100%",
   backgroundColor: "rgba(252, 123, 42, 0.1)",
-  paddingBottom: "20px",
+  // paddingBottom: "20px",
   zIndex: "5"
 };
 
 styles.mapStyle = {
-  height: "100%",
+  height: "100vh",
+  position: "absolute",
+  top: "0",
+  right: "0",
+  bottom: "0",
+  left: "0"
 };
 
 styles.mapContainerStyle = {
-  height: "900px"
+  height: "100%"
 };
 
 styles.submitBtn = {
@@ -54,8 +63,12 @@ styles.submitBtn = {
 
 styles.tryAgainStyle = {
   padding: "10px",
-  marginTop: "15px",
-  backgroundColor: "rgba(252, 123, 42, 0.8)"
+  backgroundColor: "white",
+  left: "180px",
+  position: "absolute",
+  border: "none",
+  top: "7px",
+  bottom: "auto"
 };
 
 module.exports = styles;
