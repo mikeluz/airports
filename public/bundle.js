@@ -26779,8 +26779,6 @@ var Airports = function (_React$Component) {
       showTryAgain: false,
       badInput: false
     };
-
-    _this.plotRoute = _this.plotRoute.bind(_this);
     return _this;
   }
 
@@ -26790,7 +26788,6 @@ var Airports = function (_React$Component) {
       var _this2 = this;
 
       var clearInputs = [].slice.call(document.getElementsByTagName('input'));
-
       clearInputs.forEach(function (input) {
         input.addEventListener("input", function (e) {
           if (_this2.state.showTryAgain === true) {
@@ -26824,11 +26821,13 @@ var Airports = function (_React$Component) {
         evt.preventDefault();
       }
 
+      // validate input
       if (!this.state.depart || !this.state.arrive || this.state.depart === this.state.arrive) {
         this.setState({
           badInput: true
         });
       } else {
+        // if good input, plot route
         var _props$airports$filte = this.props.airports.filter(function (airport) {
           if (airport.name === _this3.state.depart) {
             return airport;
@@ -26968,7 +26967,7 @@ var Airports = function (_React$Component) {
             { type: 'submit', id: 'tryAgain', onClick: this.plotRoute, style: _styles2.default.btnStyle },
             'CALCULATE'
           ),
-          this.state.distance > 0 ? 'Distance is ' + this.state.distance + ' nautical miles' : 'Choose two airports to find the distance between them'
+          this.state.distance > 0 ? 'Distance: ' + this.state.distance + ' nautical miles' : 'Choose two airports to find the distance between them'
         ),
         this.state.badInput && _react2.default.createElement(
           'h2',
@@ -26977,7 +26976,7 @@ var Airports = function (_React$Component) {
         ),
         _react2.default.createElement(
           'form',
-          { onSubmit: this.plotRoute },
+          { onSubmit: this.plotRoute.bind(this) },
           _react2.default.createElement(
             'div',
             { style: _styles2.default.table },
@@ -29050,7 +29049,6 @@ var GoogleMap = function (_React$Component) {
     _this.state = {
       initMap: {}
     };
-
     return _this;
   }
 
@@ -29134,7 +29132,6 @@ var MapScript = function (_React$Component) {
       scriptLoaded: false,
       scriptError: false
     };
-
     return _this;
   }
 
@@ -29151,6 +29148,7 @@ var MapScript = function (_React$Component) {
   }, {
     key: 'handleScriptLoad',
     value: function handleScriptLoad() {
+      // when loaded, call the callback that was declared in GoogleMap and passed down as a prop
       this.props.initMap();
       this.setState({ scriptLoaded: true });
     }
@@ -29160,8 +29158,9 @@ var MapScript = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(_reactLoadScript2.default, {
-          url: 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAJJ4zQXgdDc2gJfyGy746iBpoGBgSbdp8',
+        _react2.default.createElement(_reactLoadScript2.default
+        // load API
+        , { url: 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAJJ4zQXgdDc2gJfyGy746iBpoGBgSbdp8',
           onCreate: this.handleScriptCreate.bind(this),
           onError: this.handleScriptError.bind(this),
           onLoad: this.handleScriptLoad.bind(this)

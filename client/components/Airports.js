@@ -18,7 +18,6 @@ class Airports extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       distance: 0,
       depart: "",
@@ -26,14 +25,10 @@ class Airports extends React.Component {
       showTryAgain: false,
       badInput: false
     };
-
-    this.plotRoute = this.plotRoute.bind(this);
   }
 
   componentDidMount() {
-
     let clearInputs = [].slice.call(document.getElementsByTagName('input'));
-
     clearInputs.forEach(input => {
       input.addEventListener("input", (e) => {
         if (this.state.showTryAgain === true) {
@@ -56,7 +51,7 @@ class Airports extends React.Component {
         if (evt.which === 13 && !this.state.badInput && !this.state.distance) {
           this.plotRoute();
         }
-      });
+    });
 
   }
 
@@ -65,12 +60,13 @@ class Airports extends React.Component {
       evt.preventDefault();
     }
 
+    // validate input
     if (!this.state.depart || !this.state.arrive || (this.state.depart === this.state.arrive)) {
       this.setState({
         badInput: true
       });
     } else {
-
+      // if good input, plot route
       let [departAirport] = this.props.airports.filter(airport => {
         if (airport.name === this.state.depart) {
           return airport;
@@ -197,35 +193,38 @@ class Airports extends React.Component {
           this.state.showTryAgain ? 
           <button onClick={this.onTryAgainClick.bind(this)} id="tryAgain" style={styles.btnStyle}>TRY AGAIN</button> :
           <button type="submit" id="tryAgain" onClick={this.plotRoute} style={styles.btnStyle}>CALCULATE</button>
-        }{(this.state.distance > 0) ? `Distance is ${this.state.distance} nautical miles` : `Choose two airports to find the distance between them`}</h1>
-        
+        }{(this.state.distance > 0) ? `Distance: ${this.state.distance} nautical miles` : `Choose two airports to find the distance between them`}</h1>
+
         {this.state.badInput && <h2 id="badInputWarning" style={styles.badInputWarning}>You must select 2 airports!</h2>}
 
-        <form onSubmit={this.plotRoute}>
-        <div style={styles.table}>
-          <div id="depart-div" style={styles.inputStyle}>
-            <h1 style={styles.headerStyle}>Depart</h1>
-            <Autocomplete
-            id="depart"
-            placeholder="e.g., John F. Kennedy"
-            data={this.props.airports && this.props.airports.map(airport => airport.name)}
-            style={styles.predictiveDropdownStyles}
-            onSelected={this.onDepartSelected.bind(this)}
-            reload={this.state.showTryAgain}
-            ></Autocomplete>
-          </div>
-          <div id="arrive-div" style={styles.inputStyle}>
-            <h1 style={styles.headerStyle}>Arrive</h1>
-            <Autocomplete
-            id="arrive"
-            placeholder="e.g., Seattle Tacoma"
-            data={this.props.airports && this.props.airports.map(airport => airport.name)}
-            style={styles.predictiveDropdownStyles}
-            onSelected={this.onArriveSelected.bind(this)} 
-            reload={this.state.showTryAgain}
-            ></Autocomplete>
-          </div>
-        </div>  
+        <form onSubmit={this.plotRoute.bind(this)}>
+          <div style={styles.table}>
+
+            <div id="depart-div" style={styles.inputStyle}>
+              <h1 style={styles.headerStyle}>Depart</h1>
+              <Autocomplete
+              id="depart"
+              placeholder="e.g., John F. Kennedy"
+              data={this.props.airports && this.props.airports.map(airport => airport.name)}
+              style={styles.predictiveDropdownStyles}
+              onSelected={this.onDepartSelected.bind(this)}
+              reload={this.state.showTryAgain}
+              ></Autocomplete>
+            </div>
+          
+            <div id="arrive-div" style={styles.inputStyle}>
+              <h1 style={styles.headerStyle}>Arrive</h1>
+              <Autocomplete
+              id="arrive"
+              placeholder="e.g., Seattle Tacoma"
+              data={this.props.airports && this.props.airports.map(airport => airport.name)}
+              style={styles.predictiveDropdownStyles}
+              onSelected={this.onArriveSelected.bind(this)} 
+              reload={this.state.showTryAgain}
+              ></Autocomplete>
+            </div>
+          
+          </div>  
         </form>
       </div>
     )
