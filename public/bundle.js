@@ -11979,7 +11979,7 @@ styles.table = {
   textAlign: 'center',
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginTop: '14%'
+  marginTop: '20%'
 };
 
 styles.inputStyle = {
@@ -12012,7 +12012,6 @@ styles.inputContainerStyle = {
   margin: "auto",
   width: "100%",
   backgroundColor: "rgba(252, 123, 42, 0.1)",
-  // paddingBottom: "20px",
   zIndex: "5"
 };
 
@@ -12029,20 +12028,27 @@ styles.mapContainerStyle = {
   height: "100%"
 };
 
-styles.submitBtn = {
-  margin: "auto",
-  position: "absolute",
-  display: "none"
-};
-
-styles.tryAgainStyle = {
+styles.btnStyle = {
   padding: "10px",
   backgroundColor: "white",
-  left: "180px",
+  left: "10%",
   position: "absolute",
   border: "none",
   top: "7px",
-  bottom: "auto"
+  bottom: "auto",
+  borderRadius: "20px"
+};
+
+styles.badInputWarning = {
+  position: "absolute",
+  width: "100%",
+  margin: "auto",
+  textAlign: "center",
+  backgroundColor: "red",
+  color: "white",
+  marginTop: "10px",
+  marginBottom: "10px"
+
 };
 
 module.exports = styles;
@@ -26790,11 +26796,14 @@ var Airports = function (_React$Component) {
             e.target.value = "";
           }
         });
+        // should submit on enter keypress
+        input.addEventListener('keypress', function (evt) {
+          if (evt.which === 13) {
+            _this2.plotRoute();
+          }
+        });
       });
-    }
-  }, {
-    key: 'componentDidUpdate',
-    value: function componentDidUpdate() {
+
       if (document.getElementById('tryAgain')) {
         document.getElementById('tryAgain').addEventListener('mouseenter', function (evt) {
           evt.target.style.cursor = "pointer";
@@ -26804,102 +26813,113 @@ var Airports = function (_React$Component) {
           evt.target.style.backgroundColor = "white";
         });
       }
-
-      console.log(document.getElementById('depart'));
     }
   }, {
     key: 'plotRoute',
     value: function plotRoute(evt) {
       var _this3 = this;
 
-      evt.preventDefault();
+      // evt.preventDefault();
 
-      var _props$airports$filte = this.props.airports.filter(function (airport) {
-        if (airport.name === _this3.state.depart) {
-          return airport;
-        }
-      }),
-          _props$airports$filte2 = _slicedToArray(_props$airports$filte, 1),
-          departAirport = _props$airports$filte2[0];
-
-      var departCoors = {
-        latitude: departAirport.latitude_deg,
-        longitude: departAirport.longitude_deg
-      };
-
-      var _props$airports$filte3 = this.props.airports.filter(function (airport) {
-        if (airport.name === _this3.state.arrive) {
-          return airport;
-        }
-      }),
-          _props$airports$filte4 = _slicedToArray(_props$airports$filte3, 1),
-          arriveAirport = _props$airports$filte4[0];
-
-      var arriveCoors = {
-        latitude: arriveAirport.latitude_deg,
-        longitude: arriveAirport.longitude_deg
-      };
-
-      var distance = _geolib2.default.getDistance(departCoors, arriveCoors) * 0.000539957;
-
-      this.setState({
-        distance: distance
-      });
-
-      var departMarkerCoors = { lat: Number(departAirport.latitude_deg), lng: Number(departAirport.longitude_deg) };
-      var arriveMarkerCoors = { lat: Number(arriveAirport.latitude_deg), lng: Number(arriveAirport.longitude_deg) };
-
-      var map = void 0;
-      (function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: { lat: 40.806862, lng: -96.681679 },
-          zoom: 4
+      if (!this.state.depart || !this.state.arrive || this.state.depart === this.state.arrive) {
+        this.setState({
+          badInput: true
         });
-      })();
+      } else {
+        if (this.state.badInput === true) {
+          this.setState({
+            badInput: false
+          });
+        }
 
-      var departMarker = new google.maps.Marker({
-        position: departMarkerCoors
-      });
+        var _props$airports$filte = this.props.airports.filter(function (airport) {
+          if (airport.name === _this3.state.depart) {
+            return airport;
+          }
+        }),
+            _props$airports$filte2 = _slicedToArray(_props$airports$filte, 1),
+            departAirport = _props$airports$filte2[0];
 
-      var arriveMarker = new google.maps.Marker({
-        position: arriveMarkerCoors
-      });
+        var departCoors = {
+          latitude: departAirport.latitude_deg,
+          longitude: departAirport.longitude_deg
+        };
 
-      departMarker.setMap(map);
-      arriveMarker.setMap(map);
+        var _props$airports$filte3 = this.props.airports.filter(function (airport) {
+          if (airport.name === _this3.state.arrive) {
+            return airport;
+          }
+        }),
+            _props$airports$filte4 = _slicedToArray(_props$airports$filte3, 1),
+            arriveAirport = _props$airports$filte4[0];
 
-      var departInfo = (0, _info2.default)(departAirport).open(map, departMarker);
-      var arriveInfo = (0, _info2.default)(arriveAirport).open(map, arriveMarker);
+        var arriveCoors = {
+          latitude: arriveAirport.latitude_deg,
+          longitude: arriveAirport.longitude_deg
+        };
 
-      // draw route using Polyline -- no "FLIGHT" travel option in directions service :(
-      var line = new google.maps.Polyline({
-        path: [departMarkerCoors, arriveMarkerCoors],
-        strokeColor: "#FF0000",
-        strokeOpacity: 1.0,
-        strokeWeight: 2,
-        map: map
-      });
+        var distance = _geolib2.default.getDistance(departCoors, arriveCoors) * 0.000539957;
 
-      document.getElementById('inputContainer').style.height = "";
+        this.setState({
+          distance: distance
+        });
 
-      var hideInput = document.getElementsByTagName("form")[0];
-      hideInput.style.cssText = "display: none";
+        var departMarkerCoors = { lat: Number(departAirport.latitude_deg), lng: Number(departAirport.longitude_deg) };
+        var arriveMarkerCoors = { lat: Number(arriveAirport.latitude_deg), lng: Number(arriveAirport.longitude_deg) };
 
-      this.setState({
-        showTryAgain: true,
-        depart: "",
-        arrive: ""
-      });
+        var map = void 0;
+        (function initMap() {
+          map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: 40.806862, lng: -96.681679 },
+            zoom: 4
+          });
+        })();
 
-      var clearInputs = [].slice.call(document.getElementsByTagName('input'));
+        var departMarker = new google.maps.Marker({
+          position: departMarkerCoors
+        });
 
-      clearInputs.forEach(function (input) {
-        changeValue(input, "");
-      });
+        var arriveMarker = new google.maps.Marker({
+          position: arriveMarkerCoors
+        });
+
+        departMarker.setMap(map);
+        arriveMarker.setMap(map);
+
+        var departInfo = (0, _info2.default)(departAirport).open(map, departMarker);
+        var arriveInfo = (0, _info2.default)(arriveAirport).open(map, arriveMarker);
+
+        // draw route using Polyline -- no "FLIGHT" travel option in directions service :(
+        var line = new google.maps.Polyline({
+          path: [departMarkerCoors, arriveMarkerCoors],
+          strokeColor: "#FF0000",
+          strokeOpacity: 1.0,
+          strokeWeight: 2,
+          map: map
+        });
+
+        document.getElementById('inputContainer').style.height = "";
+
+        var hideInput = document.getElementsByTagName("form")[0];
+        hideInput.style.cssText = "display: none";
+
+        this.setState({
+          showTryAgain: true,
+          depart: "",
+          arrive: ""
+        });
+
+        var clearInputs = [].slice.call(document.getElementsByTagName('input'));
+
+        clearInputs.forEach(function (input) {
+          changeValue(input, "");
+        });
+      }
     }
   }, {
     key: 'onDepartSelected',
     value: function onDepartSelected(value) {
+      console.log("DEPART");
       this.setState({
         depart: value
       });
@@ -26907,6 +26927,7 @@ var Airports = function (_React$Component) {
   }, {
     key: 'onArriveSelected',
     value: function onArriveSelected(value) {
+      console.log("ARRIVE");
       this.setState({
         arrive: value
       });
@@ -26943,12 +26964,21 @@ var Airports = function (_React$Component) {
         _react2.default.createElement(
           'h1',
           { style: _styles2.default.headerStyle },
-          this.state.showTryAgain && _react2.default.createElement(
+          this.state.showTryAgain ? _react2.default.createElement(
             'button',
-            { onClick: this.onTryAgainClick.bind(this), id: 'tryAgain', style: _styles2.default.tryAgainStyle },
+            { onClick: this.onTryAgainClick.bind(this), id: 'tryAgain', style: _styles2.default.btnStyle },
             'TRY AGAIN'
+          ) : _react2.default.createElement(
+            'button',
+            { type: 'submit', id: 'tryAgain', onClick: this.plotRoute, style: _styles2.default.btnStyle },
+            'CALCULATE'
           ),
           this.state.distance > 0 ? 'Distance is ' + this.state.distance + ' nautical miles' : 'Choose two airports to find the distance between them'
+        ),
+        this.state.badInput && _react2.default.createElement(
+          'h2',
+          { id: 'badInputWarning', style: _styles2.default.badInputWarning },
+          'You must select 2 airports!'
         ),
         _react2.default.createElement(
           'form',
@@ -26993,15 +27023,6 @@ var Airports = function (_React$Component) {
                 onSelected: this.onArriveSelected.bind(this),
                 reload: this.state.showTryAgain
               })
-            ),
-            _react2.default.createElement(
-              'div',
-              null,
-              this.state.depart && this.state.arrive && _react2.default.createElement(
-                'button',
-                { type: 'submit', onClick: this.plotRoute, style: _styles2.default.submitBtn },
-                'SUBMIT'
-              )
             )
           )
         )

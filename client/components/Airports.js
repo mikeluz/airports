@@ -39,11 +39,14 @@ class Airports extends React.Component {
           e.target.value = "";
         }
       });
+      // should submit on enter keypress
+      input.addEventListener('keypress', (evt) => {
+        if (evt.which === 13) {
+          this.plotRoute();
+        }
+      });
     });
 
-  }
-
-  componentDidUpdate() {
     if (document.getElementById('tryAgain')) {
       document.getElementById('tryAgain').addEventListener('mouseenter', (evt) => {
         evt.target.style.cursor = "pointer";
@@ -54,11 +57,21 @@ class Airports extends React.Component {
       });
     }
 
-        console.log(document.getElementById('depart'));
   }
 
   plotRoute(evt) {
-    evt.preventDefault();
+    // evt.preventDefault();
+
+    if (!this.state.depart || !this.state.arrive || (this.state.depart === this.state.arrive)) {
+      this.setState({
+        badInput: true
+      });
+    } else {
+      if (this.state.badInput === true) {
+        this.setState({
+          badInput: false
+        })
+      }
 
     let [departAirport] = this.props.airports.filter(airport => {
       if (airport.name === this.state.depart) {
@@ -142,15 +155,18 @@ class Airports extends React.Component {
       changeValue(input, "");
     });
 
+    }
   }
 
   onDepartSelected(value){
+    console.log("DEPART");
     this.setState({
       depart: value
     });
   }
 
   onArriveSelected(value){
+    console.log("ARRIVE");
     this.setState({
       arrive: value
     });
@@ -182,8 +198,13 @@ class Airports extends React.Component {
     return (
       <div id="inputContainer" style={styles.inputContainerStyle}>
         <h1 style={styles.headerStyle}>{
-          this.state.showTryAgain && <button onClick={this.onTryAgainClick.bind(this)} id="tryAgain" style={styles.tryAgainStyle}>TRY AGAIN</button>
+          this.state.showTryAgain ? 
+          <button onClick={this.onTryAgainClick.bind(this)} id="tryAgain" style={styles.btnStyle}>TRY AGAIN</button> :
+          <button type="submit" id="tryAgain" onClick={this.plotRoute} style={styles.btnStyle}>CALCULATE</button>
         }{(this.state.distance > 0) ? `Distance is ${this.state.distance} nautical miles` : `Choose two airports to find the distance between them`}</h1>
+        
+        {this.state.badInput && <h2 id="badInputWarning" style={styles.badInputWarning}>You must select 2 airports!</h2>}
+
         <form onSubmit={this.plotRoute}>
         <div style={styles.table}>
           <div id="depart-div" style={styles.inputStyle}>
@@ -208,9 +229,6 @@ class Airports extends React.Component {
             reload={this.state.showTryAgain}
             ></Autocomplete>
           </div>
-        <div>{
-          (this.state.depart && this.state.arrive) && <button type="submit" onClick={this.plotRoute} style={styles.submitBtn}>SUBMIT</button>
-        }</div>
         </div>  
         </form>
       </div>

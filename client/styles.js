@@ -5,7 +5,7 @@ styles.table = {
   textAlign: 'center',
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginTop: '14%'
+  marginTop: '20%'
 };
 
 styles.inputStyle = {
@@ -38,7 +38,6 @@ styles.inputContainerStyle = {
   margin: "auto",
   width: "100%",
   backgroundColor: "rgba(252, 123, 42, 0.1)",
-  // paddingBottom: "20px",
   zIndex: "5"
 };
 
@@ -55,20 +54,27 @@ styles.mapContainerStyle = {
   height: "100%"
 };
 
-styles.submitBtn = {
-  margin: "auto",
-  position: "absolute",
-  display: "none"
-};
-
-styles.tryAgainStyle = {
+styles.btnStyle = {
   padding: "10px",
   backgroundColor: "white",
-  left: "180px",
+  left: "10%",
   position: "absolute",
   border: "none",
   top: "7px",
-  bottom: "auto"
+  bottom: "auto",
+  borderRadius: "20px"
 };
+
+styles.badInputWarning = {
+  position: "absolute",
+  width: "100%",
+  margin: "auto",
+  textAlign: "center",
+  backgroundColor: "red",
+  color: "white",
+  marginTop: "10px",
+  marginBottom: "10px",
+
+}
 
 module.exports = styles;
