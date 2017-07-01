@@ -26665,6 +26665,10 @@ var _geolib = __webpack_require__(262);
 
 var _geolib2 = _interopRequireDefault(_geolib);
 
+var _info = __webpack_require__(266);
+
+var _info2 = _interopRequireDefault(_info);
+
 var _reactRedux = __webpack_require__(35);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -26686,16 +26690,17 @@ var Airports = function (_React$Component) {
     _this.state = {
       distance: 0,
       depart: "",
-      arrive: ""
+      arrive: "",
+      showTryAgain: false
     };
 
-    _this.handleSubmit = _this.handleSubmit.bind(_this);
+    _this.plotRoute = _this.plotRoute.bind(_this);
     return _this;
   }
 
   _createClass(Airports, [{
-    key: 'handleSubmit',
-    value: function handleSubmit(evt) {
+    key: 'plotRoute',
+    value: function plotRoute(evt) {
       var _this2 = this;
 
       evt.preventDefault();
@@ -26731,6 +26736,47 @@ var Airports = function (_React$Component) {
       this.setState({
         distance: distance
       });
+
+      var departMarkerCoors = { lat: Number(departAirport.latitude_deg), lng: Number(departAirport.longitude_deg) };
+      var arriveMarkerCoors = { lat: Number(arriveAirport.latitude_deg), lng: Number(arriveAirport.longitude_deg) };
+
+      var map = void 0;
+      (function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: { lat: 40.806862, lng: -96.681679 },
+          zoom: 4
+        });
+      })();
+
+      var departMarker = new google.maps.Marker({
+        position: departMarkerCoors
+      });
+
+      var arriveMarker = new google.maps.Marker({
+        position: arriveMarkerCoors
+      });
+
+      departMarker.setMap(map);
+      arriveMarker.setMap(map);
+
+      var departInfo = (0, _info2.default)(departAirport).open(map, departMarker);
+      var arriveInfo = (0, _info2.default)(arriveAirport).open(map, arriveMarker);
+
+      // draw route using Polyline -- no "FLIGHT" travel option in directions service :(
+      var line = new google.maps.Polyline({
+        path: [departMarkerCoors, arriveMarkerCoors],
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 2,
+        map: map
+      });
+
+      var hideInput = document.getElementsByTagName("form")[0];
+      hideInput.style.cssText = "display: none";
+
+      this.setState({
+        showTryAgain: true
+      });
     }
   }, {
     key: 'onDepartSelected',
@@ -26747,11 +26793,34 @@ var Airports = function (_React$Component) {
       });
     }
   }, {
+    key: 'onTryAgainClick',
+    value: function onTryAgainClick() {
+      var showInput = document.getElementsByTagName("form")[0];
+      showInput.style.cssText = "display: unset";
+
+      var map = void 0;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: { lat: 40.806862, lng: -96.681679 },
+          zoom: 4
+        });
+      }
+
+      initMap();
+
+      this.setState({
+        distance: 0,
+        depart: "",
+        arrive: "",
+        showTryAgain: false
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { style: _styles2.default.inputContainerStyle },
+        { id: 'inputContainer', style: _styles2.default.inputContainerStyle },
         _react2.default.createElement(
           'h1',
           { style: _styles2.default.headerStyle },
@@ -26761,7 +26830,7 @@ var Airports = function (_React$Component) {
         ),
         _react2.default.createElement(
           'form',
-          { onSubmit: this.handleSubmit },
+          { onSubmit: this.plotRoute },
           _react2.default.createElement(
             'div',
             { style: _styles2.default.table },
@@ -26800,17 +26869,27 @@ var Airports = function (_React$Component) {
                 style: _styles2.default.predictiveDropdownStyles,
                 onSelected: this.onArriveSelected.bind(this)
               })
+            ),
+            _react2.default.createElement(
+              'div',
+              null,
+              this.state.depart && this.state.arrive && _react2.default.createElement(
+                'button',
+                { type: 'submit', onClick: this.plotRoute, style: _styles2.default.submitBtn },
+                'SUBMIT'
+              )
             )
           )
         ),
-        _react2.default.createElement('br', null),
         _react2.default.createElement(
-          'button',
-          { type: 'submit', onClick: this.handleSubmit },
-          'SUBMIT'
-        ),
-        _react2.default.createElement('br', null),
-        _react2.default.createElement('hr', null)
+          'div',
+          null,
+          this.state.showTryAgain && _react2.default.createElement(
+            'button',
+            { onClick: this.onTryAgainClick.bind(this), id: 'tryAgain' },
+            'Try Again'
+          )
+        )
       );
     }
   }]);
@@ -27394,7 +27473,9 @@ styles.table = {
 };
 
 styles.inputStyle = {
-  display: 'table-cell'
+  display: 'table-cell',
+  padding: '2px',
+  margin: '2px'
 };
 
 styles.headerStyle = {
@@ -27412,9 +27493,25 @@ styles.predictiveDropdownStyles = {
 
 styles.inputContainerStyle = {
   position: "absolute",
-  height: "100%",
   margin: "auto",
-  width: "100%"
+  width: "100%",
+  backgroundColor: "rgba(252, 123, 42, 0.2)",
+  paddingBottom: "20px",
+  zIndex: "5"
+};
+
+styles.mapStyle = {
+  height: "100%"
+};
+
+styles.mapContainerStyle = {
+  height: "900px"
+};
+
+styles.submitBtn = {
+  margin: "auto",
+  position: "absolute",
+  display: "none"
 };
 
 module.exports = styles;
@@ -28827,6 +28924,10 @@ var _axios = __webpack_require__(22);
 
 var _axios2 = _interopRequireDefault(_axios);
 
+var _styles = __webpack_require__(261);
+
+var _styles2 = _interopRequireDefault(_styles);
+
 var _MapScript = __webpack_require__(264);
 
 var _MapScript2 = _interopRequireDefault(_MapScript);
@@ -28840,18 +28941,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-// import Script from 'react-load-script';
-
-
-var mapStyle = {
-  height: "600px",
-  zIndex: "-5"
-};
-
-var mapContainerStyle = {
-  height: "100%"
-};
 
 var GoogleMap = function (_React$Component) {
   _inherits(GoogleMap, _React$Component);
@@ -28874,8 +28963,8 @@ var GoogleMap = function (_React$Component) {
       var map = void 0;
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
-          center: { lat: -34.397, lng: 150.644 },
-          zoom: 8
+          center: { lat: 40.806862, lng: -96.681679 },
+          zoom: 4
         });
       }
       this.setState({
@@ -28887,8 +28976,8 @@ var GoogleMap = function (_React$Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { id: 'map-container', style: mapContainerStyle },
-        _react2.default.createElement('div', { id: 'map', style: mapStyle }),
+        { id: 'map-container', style: _styles2.default.mapContainerStyle },
+        _react2.default.createElement('div', { id: 'map', style: _styles2.default.mapStyle }),
         typeof this.state.initMap === 'function' ? _react2.default.createElement(_MapScript2.default, { initMap: this.state.initMap }) : _react2.default.createElement(
           'h1',
           null,
@@ -28902,13 +28991,6 @@ var GoogleMap = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = GoogleMap;
-
-// action creators
-// import {findPubsByName} from 'APP/app/reducers/pubs/pubSearchResults'
-
-// export default connect(
-//   ({}) => ({}), {},
-// )(App)
 
 /***/ }),
 /* 264 */
@@ -29165,6 +29247,29 @@ Script.erroredScripts = {};
 Script.idCount = 0;
 exports.default = Script;
 module.exports = exports['default'];
+
+/***/ }),
+/* 266 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+      value: true
+});
+var generateInfoWindow = function generateInfoWindow(airport) {
+
+      var contentString = "<div id=\"content\"><div id=\"siteNotice\"></div>\n      <h2 id=\"firstHeading\" class=\"firstHeading\">" + airport.name + "</h2>\n      <div id=\"bodyContent\">\n      <p><a href=" + airport.wikipedia_link + " target=\"_blank\">Wikipedia Entry For " + airport.name + "</a></p>\n      </div>\n      </div>";
+
+      var infowindow = new google.maps.InfoWindow({
+            content: contentString
+      });
+
+      return infowindow;
+};
+
+exports.default = generateInfoWindow;
 
 /***/ })
 /******/ ]);

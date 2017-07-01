@@ -7,7 +7,9 @@ styles.table = {
 };
 
 styles.inputStyle = {
-  display: 'table-cell'
+  display: 'table-cell',
+  padding: '2px',
+  margin: '2px'
 };
 
 styles.headerStyle = {
@@ -21,13 +23,29 @@ styles.headerStyle = {
 styles.predictiveDropdownStyles = {
   fontSize: "10pt",
   listStyle: "none",
-}
+};
 
 styles.inputContainerStyle = {
   position: "absolute",
-  height: "100%",
   margin: "auto",
-  width: "100%"
-}
+  width: "100%",
+  backgroundColor: "rgba(252, 123, 42, 0.2)",
+  paddingBottom: "20px",
+  zIndex: "5"
+};
+
+styles.mapStyle = {
+  height: "100%",
+};
+
+styles.mapContainerStyle = {
+  height: "900px"
+};
+
+styles.submitBtn = {
+  margin: "auto",
+  position: "absolute",
+  display: "none"
+};
 
 module.exports = styles;

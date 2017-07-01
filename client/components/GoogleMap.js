@@ -1,17 +1,9 @@
 import React from 'react';
 import axios from 'axios';
 
-// import Script from 'react-load-script';
-import MapScript from './MapScript'
+import styles from '../styles.js';
 
-const mapStyle = {
-  height: "600px",
-  zIndex: "-5"
-};
-
-const mapContainerStyle = {
-  height: "100%"
-};
+import MapScript from './MapScript';
 
 class GoogleMap extends React.Component {
 
@@ -28,8 +20,8 @@ class GoogleMap extends React.Component {
     let map;
     function initMap() {
       map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: -34.397, lng: 150.644},
-        zoom: 8
+        center: {lat: 40.806862, lng: -96.681679},
+        zoom: 4
       });
     }
     this.setState({
@@ -39,8 +31,8 @@ class GoogleMap extends React.Component {
 
   render() {
     return (
-      <div id="map-container" style={mapContainerStyle}>
-        <div id="map" style={mapStyle}></div>
+      <div id="map-container" style={styles.mapContainerStyle}>
+        <div id="map" style={styles.mapStyle}></div>
         {
           (typeof this.state.initMap === 'function') ? <MapScript initMap={this.state.initMap}/> : <h1>Oops, something went wrong.</h1>
         }
@@ -49,13 +41,6 @@ class GoogleMap extends React.Component {
   }
 }
 
-import {connect} from 'react-redux'
+import {connect} from 'react-redux';
 
-export default GoogleMap
-
-// action creators
-// import {findPubsByName} from 'APP/app/reducers/pubs/pubSearchResults'
-
-// export default connect(
-//   ({}) => ({}), {},
-// )(App)
+export default GoogleMap;
