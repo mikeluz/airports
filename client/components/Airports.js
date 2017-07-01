@@ -61,6 +61,7 @@ class Airports extends React.Component {
     }
 
     // validate input
+    console.log(this);
     if (!this.state.depart || !this.state.arrive || (this.state.depart === this.state.arrive)) {
       this.setState({
         badInput: true
@@ -192,12 +193,12 @@ class Airports extends React.Component {
         <h1 style={styles.headerStyle}>{
           this.state.showTryAgain ? 
           <button onClick={this.onTryAgainClick.bind(this)} id="tryAgain" style={styles.btnStyle}>TRY AGAIN</button> :
-          <button type="submit" id="tryAgain" onClick={this.plotRoute} style={styles.btnStyle}>CALCULATE</button>
+          <button type="submit" id="tryAgain" onClick={this.plotRoute.bind(this)} style={styles.btnStyle}>CALCULATE</button>
         }{(this.state.distance > 0) ? `Distance: ${this.state.distance} nautical miles` : `Choose two airports to find the distance between them`}</h1>
 
         {this.state.badInput && <h2 id="badInputWarning" style={styles.badInputWarning}>You must select 2 airports!</h2>}
 
-        <form onSubmit={this.plotRoute.bind(this)}>
+        <form>
           <div style={styles.table}>
 
             <div id="depart-div" style={styles.inputStyle}>
