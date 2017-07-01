@@ -27028,12 +27028,13 @@ return /******/ (function(modules) { // webpackBootstrap
 		    // indexOfChild = (selectedSuggestion - 1) % data.length;
 
 		    // make suggestions highlight when you arrow down
+
 		    if (arriveChildren.length > 0) {
 			    arriveChildren[indexOfChild].style.cssText = "background-color: rgba(255, 255, 30, 0.8)";
 			    if (arriveChildren[indexOfChild + 1]) {
 				    arriveChildren[indexOfChild + 1].style.cssText = "background-color: transparent";
 			    }
-			    if (indexOfChild === data.length - 1) {
+			    if ((indexOfChild === data.length - 1) && indexOfChild !== 0) {
 				    arriveChildren[0].style.cssText = "background-color: transparent";	
 			    }
 		    }
@@ -27043,7 +27044,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			    if (departChildren[indexOfChild + 1]) {
 				    departChildren[indexOfChild + 1].style.cssText = "background-color: transparent";
 			    }
-			    if (indexOfChild === data.length - 1) {
+			    if ((indexOfChild === data.length - 1) && indexOfChild !== 0) {
 				    departChildren[0].style.cssText = "background-color: transparent";	
 			    }
 		    }
@@ -27073,15 +27074,17 @@ return /******/ (function(modules) { // webpackBootstrap
 		    indexOfChild = ((selectedSuggestion + 1) >= -1) ? ((selectedSuggestion + 1) % data.length) : (data.length - 1);
 		    // indexOfChild = (selectedSuggestion + 1) % data.length;
 
-		    console.log(indexOfChild);
+		    // console.log(indexOfChild);
 
 		    // make suggestions highlight when you arrow down
 		    if (arriveChildren.length > 0) {
 			    arriveChildren[indexOfChild].style.cssText = "background-color: rgba(255, 255, 30, 0.8)";
 			    if (arriveChildren[indexOfChild - 1]) {
 				    arriveChildren[indexOfChild - 1].style.cssText = "background-color: transparent";
+			    } else {
+			    	arriveChildren[indexOfChild].style.cssText = "background-color: rgba(255, 255, 30, 0.8)";
 			    }
-			    if (indexOfChild === 0) {
+			    if ((indexOfChild === 0) && (indexOfChild !== data.length - 1)) {
 				    arriveChildren[data.length-1].style.cssText = "background-color: transparent";	
 			    }
 		    }
@@ -27090,8 +27093,10 @@ return /******/ (function(modules) { // webpackBootstrap
 			    departChildren[indexOfChild].style.cssText = "background-color: rgba(255, 255, 30, 0.8)";
 			    if (departChildren[indexOfChild - 1]) {
 				    departChildren[indexOfChild - 1].style.cssText = "background-color: transparent";
+			    } else {
+			    	departChildren[indexOfChild].style.cssText = "background-color: rgba(255, 255, 30, 0.8)";
 			    }
-			    if (indexOfChild === 0) {
+			    if (indexOfChild === 0 && (indexOfChild !== data.length - 1)) {
 				    departChildren[data.length-1].style.cssText = "background-color: transparent";	
 			    }
 		    }
