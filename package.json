@@ -19,6 +19,7 @@
     "pg-hstore": "^2.3.2",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-load-script": "0.0.4",
     "react-predictive-input": "^1.2.5",
     "react-redux": "^5.0.5",
     "redux": "^3.7.1",

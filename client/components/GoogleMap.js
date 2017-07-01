@@ -1,7 +1,15 @@
 import React from 'react';
 import axios from 'axios';
 
+// import Script from 'react-load-script';
+import MapScript from './MapScript'
+
 const mapStyle = {
+  height: "600px",
+  zIndex: "-5"
+};
+
+const mapContainerStyle = {
   height: "100%"
 };
 
@@ -10,28 +18,32 @@ class GoogleMap extends React.Component {
   constructor(props) {
     super(props);
 
-    // bind all handlers
-    // this.handlePubClick = this.handlePubClick.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+    this.state = {
+      initMap: {}
+    };
 
-  // handlePubClick() {
-  //   this.props.findPubsByName('');
-  // }
+  }
 
   componentDidMount() {
-
-  }
-
-  handleSubmit() {
-
+    let map;
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: -34.397, lng: 150.644},
+        zoom: 8
+      });
+    }
+    this.setState({
+      initMap: initMap
+    });
   }
 
   render() {
     return (
-      <div>
-        <h1>THIS WILL BE A MAP</h1>
+      <div id="map-container" style={mapContainerStyle}>
         <div id="map" style={mapStyle}></div>
+        {
+          (typeof this.state.initMap === 'function') ? <MapScript initMap={this.state.initMap}/> : <h1>Oops, something went wrong.</h1>
+        }
       </div>
     )
   }
