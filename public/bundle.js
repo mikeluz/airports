@@ -12007,7 +12007,7 @@ styles.inputContainerStyle = {
   position: "absolute",
   margin: "auto",
   width: "100%",
-  backgroundColor: "rgba(252, 123, 42, 0.2)",
+  backgroundColor: "rgba(252, 123, 42, 0.1)",
   paddingBottom: "20px",
   zIndex: "5"
 };
@@ -26783,8 +26783,11 @@ var Airports = function (_React$Component) {
       clearInputs.forEach(function (input) {
         // console.log(input);
         input.addEventListener("input", function (e) {
-          console.log(_this2);
-          console.log(e.target.value);
+          if (_this2.state.showTryAgain === true) {
+            e.target.value = "";
+          }
+          // console.log(e.target.value);
+          // console.log("INPUT FIRED");
         });
       });
     }
@@ -26867,7 +26870,15 @@ var Airports = function (_React$Component) {
       hideInput.style.cssText = "display: none";
 
       this.setState({
-        showTryAgain: true
+        showTryAgain: true,
+        depart: "",
+        arrive: ""
+      });
+
+      var clearInputs = [].slice.call(document.getElementsByTagName('input'));
+
+      clearInputs.forEach(function (input) {
+        changeValue(input, "");
       });
     }
   }, {
@@ -26900,24 +26911,17 @@ var Airports = function (_React$Component) {
 
       initMap();
 
-      var clearInputs = [].slice.call(document.getElementsByTagName('input'));
-
-      clearInputs.forEach(function (input) {
-        changeValue(input, "");
-      });
-
       document.getElementById('inputContainer').style.height = "100%";
 
       this.setState({
         distance: 0,
-        depart: "",
-        arrive: "",
         showTryAgain: false
       });
     }
   }, {
     key: 'render',
     value: function render() {
+      // console.log("RENDER", this.state.showTryAgain);
       return _react2.default.createElement(
         'div',
         { id: 'inputContainer', style: _styles2.default.inputContainerStyle },
@@ -26948,7 +26952,8 @@ var Airports = function (_React$Component) {
                   return airport.name;
                 }),
                 style: _styles2.default.predictiveDropdownStyles,
-                onSelected: this.onDepartSelected.bind(this)
+                onSelected: this.onDepartSelected.bind(this),
+                reload: this.state.showTryAgain
               })
             ),
             _react2.default.createElement(
@@ -26966,7 +26971,8 @@ var Airports = function (_React$Component) {
                   return airport.name;
                 }),
                 style: _styles2.default.predictiveDropdownStyles,
-                onSelected: this.onArriveSelected.bind(this)
+                onSelected: this.onArriveSelected.bind(this),
+                reload: this.state.showTryAgain
               })
             ),
             _react2.default.createElement(
@@ -27091,6 +27097,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+
 	var Autocomplete = function (_Component) {
 		_inherits(Autocomplete, _Component);
 	
@@ -27110,12 +27117,12 @@ return /******/ (function(modules) { // webpackBootstrap
 		}
 	
 		_createClass(Autocomplete, [{
-			key: 'componentWillMount',
-			value: function componentWillMount() {
+			key: 'componentWillReceiveProps',
+			value: function componentWillReceiveProps() {
 				var value = this.props.value;
 	
-	
-				if (value !== '') {
+				// added "reload" flag to clear state when route is plotted
+				if (value !== '' || this.props.reload) {
 					this.setState({
 						value: value,
 						data: []

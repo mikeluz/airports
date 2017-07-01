@@ -33,7 +33,7 @@ styles.inputContainerStyle = {
   position: "absolute",
   margin: "auto",
   width: "100%",
-  backgroundColor: "rgba(252, 123, 42, 0.2)",
+  backgroundColor: "rgba(252, 123, 42, 0.1)",
   paddingBottom: "20px",
   zIndex: "5"
 };

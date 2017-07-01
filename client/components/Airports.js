@@ -36,8 +36,11 @@ class Airports extends React.Component {
     clearInputs.forEach(input => {
       // console.log(input);
       input.addEventListener("input", (e) => {
-        console.log(this);
-        console.log(e.target.value);
+        if (this.state.showTryAgain === true) {
+          e.target.value = "";
+        }
+        // console.log(e.target.value);
+        // console.log("INPUT FIRED");
       });
     });
 
@@ -117,7 +120,15 @@ class Airports extends React.Component {
     hideInput.style.cssText = "display: none";
 
     this.setState({
-      showTryAgain: true
+      showTryAgain: true,
+      depart: "",
+      arrive: "",
+    });
+
+    let clearInputs = [].slice.call(document.getElementsByTagName('input'));
+
+    clearInputs.forEach(input => {
+      changeValue(input, "");
     });
 
   }
@@ -148,23 +159,16 @@ class Airports extends React.Component {
 
     initMap();
 
-    let clearInputs = [].slice.call(document.getElementsByTagName('input'));
-
-    clearInputs.forEach(input => {
-      changeValue(input, "");
-    });
-
     document.getElementById('inputContainer').style.height = "100%";
 
     this.setState({
       distance: 0,
-      depart: "",
-      arrive: "",
       showTryAgain: false
     });
   }
 
   render() {
+    // console.log("RENDER", this.state.showTryAgain);
     return (
       <div id="inputContainer" style={styles.inputContainerStyle}>
         <h1 style={styles.headerStyle}>How far is it? {(this.state.distance > 0) && ` ${this.state.distance} nautical miles.`}</h1>
@@ -178,6 +182,7 @@ class Airports extends React.Component {
             data={this.props.airports && this.props.airports.map(airport => airport.name)}
             style={styles.predictiveDropdownStyles}
             onSelected={this.onDepartSelected.bind(this)}
+            reload={this.state.showTryAgain}
             ></Autocomplete>
 
           </div>
@@ -189,6 +194,7 @@ class Airports extends React.Component {
             data={this.props.airports && this.props.airports.map(airport => airport.name)}
             style={styles.predictiveDropdownStyles}
             onSelected={this.onArriveSelected.bind(this)} 
+            reload={this.state.showTryAgain}
             ></Autocomplete>
           </div>
         <div>{
