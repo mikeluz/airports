@@ -11966,95 +11966,7 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 106 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var styles = {};
-
-styles.table = {
-  display: 'table',
-  textAlign: 'center',
-  marginLeft: 'auto',
-  marginRight: 'auto',
-  marginTop: '20vh'
-};
-
-styles.inputStyle = {
-  display: 'table-cell',
-  padding: '2px',
-  margin: '2px',
-  zIndex: '6'
-};
-
-styles.headerStyle = {
-  marginTop: "51px",
-  marginBottom: '2px',
-  padding: "5px",
-  marginLeft: "auto",
-  marginRight: "auto",
-  backgroundColor: "rgba(252, 123, 42, 0.9)"
-};
-
-styles.predictiveDropdownStyles = {
-  fontSize: "10pt",
-  listStyle: "none",
-  width: "400px",
-  margin: "0px",
-  cursor: "pointer"
-};
-
-styles.inputContainerStyle = {
-  height: "100vh",
-  position: "relative",
-  margin: "auto",
-  width: "100%",
-  backgroundColor: "rgba(252, 123, 42, 0.1)",
-  zIndex: "5"
-};
-
-styles.mapStyle = {
-  height: "100vh",
-  position: "absolute",
-  top: "0",
-  right: "0",
-  bottom: "0",
-  left: "0"
-};
-
-styles.mapContainerStyle = {
-  height: "100%"
-};
-
-styles.btnStyle = {
-  padding: "10px",
-  backgroundColor: "rgba(255, 255, 255, 0.8)",
-  left: "0%",
-  width: "40%",
-  marginTop: "2px",
-  border: "none",
-  top: "7px",
-  bottom: "auto",
-  borderRadius: "20px"
-};
-
-styles.badInputWarning = {
-  position: "absolute",
-  width: "100%",
-  margin: "auto",
-  textAlign: "center",
-  backgroundColor: "red",
-  color: "white",
-  marginTop: "10px",
-  marginBottom: "10px"
-
-};
-
-module.exports = styles;
-
-/***/ }),
+/* 106 */,
 /* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -25699,7 +25611,6 @@ Object.defineProperty(exports, "__esModule", {
 var _redux = __webpack_require__(36);
 
 var appReducer = (0, _redux.combineReducers)({
-  // logged-in user
   airports: __webpack_require__(100).default
 });
 
@@ -26718,21 +26629,25 @@ var _axios = __webpack_require__(26);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _reactPredictiveInput = __webpack_require__(261);
-
-var _reactPredictiveInput2 = _interopRequireDefault(_reactPredictiveInput);
-
-var _styles = __webpack_require__(106);
-
-var _styles2 = _interopRequireDefault(_styles);
-
 var _geolib = __webpack_require__(262);
 
 var _geolib2 = _interopRequireDefault(_geolib);
 
-var _info = __webpack_require__(263);
+var _reactPredictiveInput = __webpack_require__(261);
 
-var _info2 = _interopRequireDefault(_info);
+var _reactPredictiveInput2 = _interopRequireDefault(_reactPredictiveInput);
+
+var _styles = __webpack_require__(270);
+
+var _styles2 = _interopRequireDefault(_styles);
+
+var _mapUtils = __webpack_require__(271);
+
+var _eventHandlers = __webpack_require__(272);
+
+var _inputUtils = __webpack_require__(273);
+
+var _inputUtils2 = _interopRequireDefault(_inputUtils);
 
 var _reactRedux = __webpack_require__(35);
 
@@ -26744,11 +26659,11 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var changeValue = function changeValue(element, value) {
-  var event = new Event('input', { bubbles: true });
-  element.value = value;
-  element.dispatchEvent(event);
-};
+// utils
+
+
+// click tracker for header toggle
+var bannerClicks = 0;
 
 var Airports = function (_React$Component) {
   _inherits(Airports, _React$Component);
@@ -26771,128 +26686,80 @@ var Airports = function (_React$Component) {
   _createClass(Airports, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      var _this2 = this;
-
-      var clearInputs = [].slice.call(document.getElementsByTagName('input'));
-      clearInputs.forEach(function (input) {
-        input.addEventListener("input", function (e) {
-          if (_this2.state.showTryAgain === true) {
-            e.target.value = "";
-          }
-        });
-      });
-
-      if (document.getElementById('tryAgain')) {
-        document.getElementById('tryAgain').addEventListener('mouseenter', function (evt) {
-          evt.target.style.cursor = "pointer";
-          evt.target.style.backgroundColor = "yellow";
-        });
-        document.getElementById('tryAgain').addEventListener('mouseleave', function (evt) {
-          evt.target.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
-        });
-      }
-
-      document.addEventListener('keypress', function (evt) {
-        if (evt.which === 13 && !_this2.state.badInput && !_this2.state.distance) {
-          _this2.plotRoute();
-        }
-      });
-
-      document.addEventListener('input', function (evt) {
-        var showLists = [].slice.call(document.getElementsByTagName('ul'));
-        showLists.forEach(function (ul) {
-          if (ul.children.length > 0) {
-            ul.style.display = "block";
-          } else {
-            ul.style.display = "none";
-          }
-        });
-      });
+      (0, _eventHandlers.addEventHandlers)(this, bannerClicks);
     }
   }, {
     key: 'plotRoute',
     value: function plotRoute(evt) {
-      var _this3 = this;
+      var _this2 = this;
 
       if (evt) {
+        // prevent default event behavior if evt is present
         evt.preventDefault();
       }
 
       // validate input
-      console.log(this);
       if (!this.state.depart || !this.state.arrive || this.state.depart === this.state.arrive) {
         this.setState({
           badInput: true
         });
       } else {
-        // if good input, plot route
+        // if good input, plot route //
+
         var _props$airports$filte = this.props.airports.filter(function (airport) {
-          if (airport.name === _this3.state.depart) {
+          if (airport.name === _this2.state.depart) {
             return airport;
           }
         }),
             _props$airports$filte2 = _slicedToArray(_props$airports$filte, 1),
             departAirport = _props$airports$filte2[0];
+        // build DEPART coordinates object
+
 
         var departCoors = {
           latitude: departAirport.latitude_deg,
           longitude: departAirport.longitude_deg
         };
 
+        // get ARRIVE object from store
+
         var _props$airports$filte3 = this.props.airports.filter(function (airport) {
-          if (airport.name === _this3.state.arrive) {
+          if (airport.name === _this2.state.arrive) {
             return airport;
           }
         }),
             _props$airports$filte4 = _slicedToArray(_props$airports$filte3, 1),
             arriveAirport = _props$airports$filte4[0];
+        // build ARRIVE coordinates object
+
 
         var arriveCoors = {
           latitude: arriveAirport.latitude_deg,
           longitude: arriveAirport.longitude_deg
         };
 
-        var distance = _geolib2.default.getDistance(departCoors, arriveCoors) * 0.000539957;
-        var departMarkerCoors = { lat: Number(departAirport.latitude_deg), lng: Number(departAirport.longitude_deg) };
-        var arriveMarkerCoors = { lat: Number(arriveAirport.latitude_deg), lng: Number(arriveAirport.longitude_deg) };
+        // get distance in meters with geolib npm module
+        var distance = _geolib2.default.getDistance(departCoors, arriveCoors);
 
-        var map = void 0;
-        (function initMap() {
-          map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: 40.806862, lng: -96.681679 },
-            zoom: 4,
-            mapTypeId: 'satellite'
-          });
-        })();
+        ////////////////
+        // PLOT ROUTE //
+        ////////////////
 
-        var departMarker = new google.maps.Marker({
-          position: departMarkerCoors
-        });
+        // redraw map to capture reference to it
+        var map = (0, _mapUtils.drawMap)()();
 
-        var arriveMarker = new google.maps.Marker({
-          position: arriveMarkerCoors
-        });
+        // draw markers and route
+        (0, _mapUtils.drawMarkersAndRoute)(map, departAirport, arriveAirport);
 
-        departMarker.setMap(map);
-        arriveMarker.setMap(map);
-
-        var departInfo = (0, _info2.default)(departAirport).open(map, departMarker);
-        var arriveInfo = (0, _info2.default)(arriveAirport).open(map, arriveMarker);
-
-        // draw route using Polyline -- no "FLIGHT" travel option in directions service :(
-        var line = new google.maps.Polyline({
-          path: [departMarkerCoors, arriveMarkerCoors],
-          strokeColor: "#FF0000",
-          strokeOpacity: 1.0,
-          strokeWeight: 2,
-          map: map
-        });
-
+        // shrink input container to expose map so you can interact with it
+        // note this initially covers the map so as to disallow interacting with the map right away (messes with scrolling)
         document.getElementById('inputContainer').style.height = "";
 
+        // hide inputs
         var hideInput = document.getElementsByTagName("form")[0];
         hideInput.style.cssText = "display: none";
 
+        // set state distance, clear depart and arrive airports
         this.setState({
           distance: distance,
           showTryAgain: true,
@@ -26901,44 +26768,32 @@ var Airports = function (_React$Component) {
           badInput: false
         });
 
+        // clear inputs
         var clearInputs = [].slice.call(document.getElementsByTagName('input'));
-
         clearInputs.forEach(function (input) {
-          changeValue(input, "");
+          (0, _eventHandlers.changeValue)(input, "");
         });
       }
     }
+
+    // handle selections -- see AutoComplete component
+
   }, {
     key: 'onDepartSelected',
     value: function onDepartSelected(value) {
-
-      var showLists = [].slice.call(document.getElementsByTagName('ul'));
-      showLists.forEach(function (ul) {
-        if (ul.children.length > 0) {
-          ul.style.display = "block";
-        } else {
-          ul.style.display = "none";
-        }
-      });
-
+      (0, _inputUtils2.default)();
       this.setState({
         depart: value,
         badInput: false
       });
     }
+
+    // handle selections -- see AutoComplete component
+
   }, {
     key: 'onArriveSelected',
     value: function onArriveSelected(value) {
-
-      var showLists = [].slice.call(document.getElementsByTagName('ul'));
-      showLists.forEach(function (ul) {
-        if (ul.children.length > 0) {
-          ul.style.display = "block";
-        } else {
-          ul.style.display = "none";
-        }
-      });
-
+      (0, _inputUtils2.default)();
       this.setState({
         arrive: value,
         badInput: false
@@ -26947,22 +26802,17 @@ var Airports = function (_React$Component) {
   }, {
     key: 'onTryAgainClick',
     value: function onTryAgainClick() {
+      // grab form to show
       var showInput = document.getElementsByTagName("form")[0];
       showInput.style.cssText = "display: unset";
 
-      var map = void 0;
-      function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: { lat: 40.806862, lng: -96.681679 },
-          zoom: 4,
-          mapTypeId: 'satellite'
-        });
-      }
+      // redraw map to reset
+      var map = (0, _mapUtils.drawMap)()();
 
-      initMap();
-
+      // reset height of input to cover map
       document.getElementById('inputContainer').style.height = "100vh";
 
+      // clear state
       this.setState({
         distance: 0,
         showTryAgain: false,
@@ -26977,8 +26827,8 @@ var Airports = function (_React$Component) {
         { id: 'inputContainer', style: _styles2.default.inputContainerStyle },
         _react2.default.createElement(
           'h1',
-          { style: _styles2.default.headerStyle },
-          this.state.distance > 0 ? 'Distance: ' + this.state.distance + ' nautical miles' : 'Choose two airports to find the distance between them'
+          { id: 'banner', style: _styles2.default.headerStyle },
+          this.state.distance > 0 ? 'Distance: ' + this.state.distance * 0.000539957 + ' nautical miles' : 'Choose two airports to find the distance between them'
         ),
         this.state.badInput && _react2.default.createElement(
           'h2',
@@ -27033,11 +26883,11 @@ var Airports = function (_React$Component) {
         ),
         this.state.showTryAgain ? _react2.default.createElement(
           'button',
-          { onClick: this.onTryAgainClick.bind(this), id: 'tryAgain', style: _styles2.default.btnStyle },
+          { onClick: this.onTryAgainClick.bind(this), id: 'button', style: _styles2.default.btnStyle },
           'TRY AGAIN'
         ) : _react2.default.createElement(
           'button',
-          { type: 'submit', id: 'tryAgain', onClick: this.plotRoute.bind(this), style: _styles2.default.btnStyle },
+          { type: 'submit', id: 'button', onClick: this.plotRoute.bind(this), style: _styles2.default.btnStyle },
           'CALCULATE'
         )
       );
@@ -28997,29 +28847,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! geolib 2.0.2
 
 
 /***/ }),
-/* 263 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-      value: true
-});
-var generateInfoWindow = function generateInfoWindow(airport) {
-
-      var contentString = "<div id=\"content\" style=\"background-color: transparent\"><div id=\"siteNotice\"></div>\n      <h2 id=\"firstHeading\" class=\"firstHeading\">" + airport.name + "</h2>\n      <div id=\"bodyContent\">\n      <p><a href=" + airport.wikipedia_link + " target=\"_blank\">Wikipedia Entry For " + airport.name + "</a></p>\n      </div>\n      </div>";
-
-      var infowindow = new google.maps.InfoWindow({
-            content: contentString
-      });
-
-      return infowindow;
-};
-
-exports.default = generateInfoWindow;
-
-/***/ }),
+/* 263 */,
 /* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -29040,13 +28868,15 @@ var _axios = __webpack_require__(26);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _styles = __webpack_require__(106);
-
-var _styles2 = _interopRequireDefault(_styles);
-
 var _MapScript = __webpack_require__(265);
 
 var _MapScript2 = _interopRequireDefault(_MapScript);
+
+var _styles = __webpack_require__(270);
+
+var _styles2 = _interopRequireDefault(_styles);
+
+var _mapUtils = __webpack_require__(271);
 
 var _reactRedux = __webpack_require__(35);
 
@@ -29057,6 +28887,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// utils
+
 
 var GoogleMap = function (_React$Component) {
   _inherits(GoogleMap, _React$Component);
@@ -29075,16 +28908,9 @@ var GoogleMap = function (_React$Component) {
   _createClass(GoogleMap, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      var map = void 0;
-      function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: { lat: 40.806862, lng: -96.681679 },
-          zoom: 4,
-          mapTypeId: 'satellite'
-        });
-      }
       this.setState({
-        initMap: initMap
+        // set state with initMap callback to be called once map script has loaded the maps API
+        initMap: (0, _mapUtils.drawMap)()
       });
     }
   }, {
@@ -29169,7 +28995,7 @@ var MapScript = function (_React$Component) {
   }, {
     key: 'handleScriptLoad',
     value: function handleScriptLoad() {
-      // when loaded, call the callback that was declared in GoogleMap and passed down as a prop
+      // once loaded, call the callback that was declared in GoogleMap and passed down as a prop
       this.props.initMap();
       this.setState({ scriptLoaded: true });
     }
@@ -29364,6 +29190,261 @@ Script.erroredScripts = {};
 Script.idCount = 0;
 exports.default = Script;
 module.exports = exports['default'];
+
+/***/ }),
+/* 267 */,
+/* 268 */,
+/* 269 */,
+/* 270 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var styles = {};
+
+styles.table = {
+  display: 'table',
+  textAlign: 'center',
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  marginTop: '20vh'
+};
+
+styles.inputStyle = {
+  display: 'table-cell',
+  padding: '2px',
+  margin: '2px',
+  zIndex: '6'
+};
+
+styles.headerStyle = {
+  marginTop: "51px",
+  marginBottom: '2px',
+  padding: "5px",
+  marginLeft: "auto",
+  marginRight: "auto",
+  backgroundColor: "rgba(252, 123, 42, 0.9)"
+};
+
+styles.predictiveDropdownStyles = {
+  fontSize: "10pt",
+  listStyle: "none",
+  width: "400px",
+  margin: "0px",
+  cursor: "pointer"
+};
+
+styles.inputContainerStyle = {
+  height: "100vh",
+  position: "relative",
+  margin: "auto",
+  width: "100%",
+  backgroundColor: "rgba(252, 123, 42, 0.1)",
+  zIndex: "5"
+};
+
+styles.mapStyle = {
+  height: "100vh",
+  position: "absolute",
+  top: "0",
+  right: "0",
+  bottom: "0",
+  left: "0"
+};
+
+styles.mapContainerStyle = {
+  height: "100%"
+};
+
+styles.btnStyle = {
+  padding: "10px",
+  backgroundColor: "rgba(255, 255, 255, 0.8)",
+  left: "0%",
+  width: "40%",
+  marginTop: "2px",
+  border: "none",
+  top: "7px",
+  bottom: "auto",
+  borderRadius: "20px"
+};
+
+styles.badInputWarning = {
+  position: "absolute",
+  width: "100%",
+  margin: "auto",
+  textAlign: "center",
+  backgroundColor: "red",
+  color: "white",
+  padding: "2px",
+  marginTop: "10px",
+  marginBottom: "10px"
+
+};
+
+module.exports = styles;
+
+/***/ }),
+/* 271 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var drawMap = function drawMap() {
+
+  var map = void 0;
+  return function initMap(createMap) {
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: { lat: 44.375163, lng: -100.319996 },
+      zoom: 4,
+      mapTypeId: 'satellite'
+    });
+    return map;
+  };
+};
+
+var generateInfoWindow = function generateInfoWindow(airport) {
+
+  var contentString = '<div id="content" style="background-color: transparent"><div id="siteNotice"></div>\n      <h2 id="firstHeading" class="firstHeading">' + airport.name + '</h2>\n      <div id="bodyContent">\n      <p>Elevation: ' + airport.elevation_ft + ' feet</p>\n      <p>City: ' + airport.municipality + '</p>\n      <p><a href=' + airport.wikipedia_link + ' target="_blank">Wikipedia Entry For ' + airport.name + '</a></p>\n      </div>\n      </div>';
+
+  var infowindow = new google.maps.InfoWindow({
+    content: contentString
+  });
+
+  return infowindow;
+};
+
+var drawMarkersAndRoute = function drawMarkersAndRoute(map, depart, arrive) {
+  // 2. draw markers ////////////////
+  var departMarkerCoors = { lat: Number(depart.latitude_deg), lng: Number(depart.longitude_deg) };
+  var arriveMarkerCoors = { lat: Number(arrive.latitude_deg), lng: Number(arrive.longitude_deg) };
+
+  var departMarker = new google.maps.Marker({
+    position: departMarkerCoors
+  });
+
+  var arriveMarker = new google.maps.Marker({
+    position: arriveMarkerCoors
+  });
+
+  departMarker.setMap(map);
+  arriveMarker.setMap(map);
+
+  // // 3. create info windows ///////////////
+  generateInfoWindow(depart).open(map, departMarker);
+  generateInfoWindow(arrive).open(map, arriveMarker);
+  // /////////////////////////////////////
+
+  // // 4. draw route using Polyline -- no "FLIGHT" travel option in directions service :(
+  var line = new google.maps.Polyline({
+    path: [departMarkerCoors, arriveMarkerCoors],
+    geodesic: true,
+    strokeColor: "#FF0000",
+    strokeOpacity: 1.0,
+    strokeWeight: 4,
+    map: map
+  });
+};
+
+module.exports = {
+  drawMap: drawMap,
+  generateInfoWindow: generateInfoWindow,
+  drawMarkersAndRoute: drawMarkersAndRoute
+};
+
+/***/ }),
+/* 272 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var addEventHandlers = function addEventHandlers(aiportsComponent, bannerClicks) {
+
+  var clearInputs = [].slice.call(document.getElementsByTagName('input'));
+  clearInputs.forEach(function (input) {
+    input.addEventListener("input", function (e) {
+      if (aiportsComponent.state.showTryAgain === true) {
+        e.target.value = "";
+      }
+    });
+  });
+
+  if (document.getElementById('button')) {
+    document.getElementById('button').addEventListener('mouseenter', function (evt) {
+      evt.target.style.cursor = "pointer";
+      evt.target.style.backgroundColor = "yellow";
+    });
+    document.getElementById('button').addEventListener('mouseleave', function (evt) {
+      evt.target.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+    });
+  }
+
+  document.addEventListener('keypress', function (evt) {
+    if (evt.which === 13 && !aiportsComponent.state.badInput && !aiportsComponent.state.distance) {
+      aiportsComponent.plotRoute();
+    }
+  });
+
+  document.addEventListener('input', function (evt) {
+    var showLists = [].slice.call(document.getElementsByTagName('ul'));
+    showLists.forEach(function (ul) {
+      if (ul.children.length > 0) {
+        ul.style.display = "block";
+      } else {
+        ul.style.display = "none";
+      }
+    });
+  });
+
+  document.getElementById('banner').addEventListener('click', function (evt) {
+    if (aiportsComponent.state.distance) {
+      ++bannerClicks;
+      if (bannerClicks === 1) {
+        evt.target.innerHTML = "Distance: " + aiportsComponent.state.distance + " meters";
+      }
+      if (bannerClicks === 2) {
+        evt.target.innerHTML = "Distance: " + aiportsComponent.state.distance * 0.000621371 + " miles";
+      }
+      if (bannerClicks === 3) {
+        evt.target.innerHTML = "Distance: " + aiportsComponent.state.distance * 0.000539957 + " nautical miles";
+        bannerClicks = 0;
+      }
+    }
+  });
+};
+
+var changeValue = function changeValue(element, value) {
+
+  var event = new Event('input', { bubbles: true });
+  element.value = value;
+  element.dispatchEvent(event);
+};
+
+module.exports = {
+  addEventHandlers: addEventHandlers,
+  changeValue: changeValue
+};
+
+/***/ }),
+/* 273 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var togglePredictions = function togglePredictions() {
+  [].slice.call(document.getElementsByTagName('ul')).forEach(function (ul) {
+    if (ul.children.length > 0) {
+      ul.style.display = "block";
+    } else {
+      ul.style.display = "none";
+    }
+  });
+};
+
+module.exports = togglePredictions;
 
 /***/ })
 /******/ ]);

@@ -1,9 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 
-import styles from '../styles.js';
-
 import MapScript from './MapScript';
+
+// utils
+import styles from '../utils/styles.js';
+import { drawMap } from '../utils/mapUtils.js';
 
 class GoogleMap extends React.Component {
 
@@ -15,16 +17,9 @@ class GoogleMap extends React.Component {
   }
 
   componentDidMount() {
-    let map;
-    function initMap() {
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 40.806862, lng: -96.681679},
-        zoom: 4,
-        mapTypeId: 'satellite'
-      });
-    }
     this.setState({
-      initMap: initMap
+      // set state with initMap callback to be called once map script has loaded the maps API
+      initMap: drawMap()
     });
   }
 

@@ -1,18 +1,17 @@
 import React from 'react';
 import axios from 'axios';
-import Autocomplete from 'react-predictive-input';
-
-import styles from '../styles.js';
-
 import geolib from 'geolib';
 
-import generateInfoWindow from '../info.js';
+import Autocomplete from 'react-predictive-input';
 
-const changeValue = (element, value) => {
-  const event = new Event('input', { bubbles: true });
-  element.value = value;
-  element.dispatchEvent(event);
-};
+// utils
+import styles from '../utils/styles.js';
+import { drawMap, generateInfoWindow, drawMarkersAndRoute } from '../utils/mapUtils.js';
+import { addEventHandlers, changeValue } from '../utils/eventHandlers.js';
+import togglePredictions from '../utils/inputUtils.js';
+
+// click tracker for header toggle
+let bannerClicks = 0;
 
 class Airports extends React.Component {
 
@@ -28,123 +27,69 @@ class Airports extends React.Component {
   }
 
   componentDidMount() {
-    let clearInputs = [].slice.call(document.getElementsByTagName('input'));
-    clearInputs.forEach(input => {
-      input.addEventListener("input", (e) => {
-        if (this.state.showTryAgain === true) {
-          e.target.value = "";
-        }
-      });
-    });
-
-    if (document.getElementById('tryAgain')) {
-      document.getElementById('tryAgain').addEventListener('mouseenter', (evt) => {
-        evt.target.style.cursor = "pointer";
-        evt.target.style.backgroundColor = "yellow";
-      });
-      document.getElementById('tryAgain').addEventListener('mouseleave', (evt) => {
-        evt.target.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
-      });
-    }
-
-    document.addEventListener('keypress', (evt) => {
-      if (evt.which === 13 && !this.state.badInput && !this.state.distance) {
-        this.plotRoute();
-      }
-    });
-
-    document.addEventListener('input', (evt) => {
-      let showLists = [].slice.call(document.getElementsByTagName('ul'));
-        showLists.forEach(ul => {
-          if (ul.children.length > 0) {
-            ul.style.display = "block";
-          } else {
-            ul.style.display = "none";
-          }
-        });
-    });
-
+    addEventHandlers(this, bannerClicks);
   }
 
   plotRoute(evt) {
     if (evt) {
+      // prevent default event behavior if evt is present
       evt.preventDefault();
     }
 
     // validate input
-    console.log(this);
     if (!this.state.depart || !this.state.arrive || (this.state.depart === this.state.arrive)) {
       this.setState({
         badInput: true
       });
     } else {
-      // if good input, plot route
+      // if good input, plot route //
+
+      // get DEPART airport from store
       let [departAirport] = this.props.airports.filter(airport => {
         if (airport.name === this.state.depart) {
           return airport;
         }
       });
-
+      // build DEPART coordinates object
       let departCoors = {
         latitude: departAirport.latitude_deg,
         longitude: departAirport.longitude_deg
       };
 
+      // get ARRIVE object from store
       let [arriveAirport] = this.props.airports.filter(airport => {
         if (airport.name === this.state.arrive) {
           return airport;
         }
       });
-
+      // build ARRIVE coordinates object
       let arriveCoors = {
         latitude: arriveAirport.latitude_deg,
         longitude: arriveAirport.longitude_deg
       };
 
-      let distance = geolib.getDistance(departCoors, arriveCoors) * 0.000539957;
-      let departMarkerCoors = {lat: Number(departAirport.latitude_deg), lng: Number(departAirport.longitude_deg)};
-      let arriveMarkerCoors = {lat: Number(arriveAirport.latitude_deg), lng: Number(arriveAirport.longitude_deg)};
+      // get distance in meters with geolib npm module
+      let distance = geolib.getDistance(departCoors, arriveCoors);
+      
+      ////////////////
+      // PLOT ROUTE //
+      ////////////////
 
-      let map;
-      (function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 40.806862, lng: -96.681679},
-          zoom: 4,
-          mapTypeId: 'satellite'
-        });
-      }());
+      // redraw map to capture reference to it
+      let map = drawMap()();
 
-      let departMarker = new google.maps.Marker({
-        position: departMarkerCoors
-      });
+      // draw markers and route
+      drawMarkersAndRoute(map, departAirport, arriveAirport);
 
-      let arriveMarker = new google.maps.Marker({
-        position: arriveMarkerCoors
-      });
-
-      departMarker.setMap(map);
-      arriveMarker.setMap(map);
-
-      let departInfo = generateInfoWindow(departAirport).open(map, departMarker);
-      let arriveInfo = generateInfoWindow(arriveAirport).open(map, arriveMarker);
-
-      // draw route using Polyline -- no "FLIGHT" travel option in directions service :(
-      let line = new google.maps.Polyline({
-        path: [
-            departMarkerCoors, 
-            arriveMarkerCoors
-        ],
-        strokeColor: "#FF0000",
-        strokeOpacity: 1.0,
-        strokeWeight: 2,
-        map: map
-      });
-
+      // shrink input container to expose map so you can interact with it
+      // note this initially covers the map so as to disallow interacting with the map right away (messes with scrolling)
       document.getElementById('inputContainer').style.height = "";
 
+      // hide inputs
       let hideInput = document.getElementsByTagName("form")[0];
       hideInput.style.cssText = "display: none";
 
+      // set state distance, clear depart and arrive airports
       this.setState({
         distance: distance,
         showTryAgain: true,
@@ -153,43 +98,28 @@ class Airports extends React.Component {
         badInput: false
       });
 
+      // clear inputs
       let clearInputs = [].slice.call(document.getElementsByTagName('input'));
-
       clearInputs.forEach(input => {
         changeValue(input, "");
       });
 
     }
+
   }
 
+  // handle selections -- see AutoComplete component
   onDepartSelected(value){
-
-    let showLists = [].slice.call(document.getElementsByTagName('ul'));
-      showLists.forEach(ul => {
-        if (ul.children.length > 0) {
-          ul.style.display = "block";
-        } else {
-          ul.style.display = "none";
-        }
-      });
-
+    togglePredictions();
     this.setState({
       depart: value,
       badInput: false
     });
   }
 
+  // handle selections -- see AutoComplete component
   onArriveSelected(value){
-
-    let showLists = [].slice.call(document.getElementsByTagName('ul'));
-      showLists.forEach(ul => {
-        if (ul.children.length > 0) {
-          ul.style.display = "block";
-        } else {
-          ul.style.display = "none";
-        }
-      });
-
+    togglePredictions();
     this.setState({
       arrive: value,
       badInput: false
@@ -197,22 +127,17 @@ class Airports extends React.Component {
   }
 
   onTryAgainClick() {
+    // grab form to show
     let showInput = document.getElementsByTagName("form")[0];
     showInput.style.cssText = "display: unset";
 
-    let map;
-    function initMap() {
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 40.806862, lng: -96.681679},
-        zoom: 4,
-        mapTypeId: 'satellite'
-      });
-    }
+    // redraw map to reset
+    let map = drawMap()();
 
-    initMap();
-
+    // reset height of input to cover map
     document.getElementById('inputContainer').style.height = "100vh";
-
+    
+    // clear state
     this.setState({
       distance: 0,
       showTryAgain: false,
@@ -223,7 +148,7 @@ class Airports extends React.Component {
   render() {
     return (
       <div id="inputContainer" style={styles.inputContainerStyle}>
-        <h1 style={styles.headerStyle}>{(this.state.distance > 0) ? `Distance: ${this.state.distance} nautical miles` : `Choose two airports to find the distance between them`}</h1>
+        <h1 id="banner" style={styles.headerStyle}>{(this.state.distance > 0) ? `Distance: ${this.state.distance * 0.000539957} nautical miles` : `Choose two airports to find the distance between them`}</h1>
 
         {this.state.badInput && <h2 id="badInputWarning" style={styles.badInputWarning}>You must select 2 airports!</h2>}
 
@@ -258,8 +183,8 @@ class Airports extends React.Component {
         </form>
         {
           this.state.showTryAgain ? 
-          <button onClick={this.onTryAgainClick.bind(this)} id="tryAgain" style={styles.btnStyle}>TRY AGAIN</button> :
-          <button type="submit" id="tryAgain" onClick={this.plotRoute.bind(this)} style={styles.btnStyle}>CALCULATE</button>
+          <button onClick={this.onTryAgainClick.bind(this)} id="button" style={styles.btnStyle}>TRY AGAIN</button> :
+          <button type="submit" id="button" onClick={this.plotRoute.bind(this)} style={styles.btnStyle}>CALCULATE</button>
         }
       </div>
     )

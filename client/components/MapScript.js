@@ -22,11 +22,10 @@ class MapScript extends React.Component {
   }
    
   handleScriptLoad() {
-    // when loaded, call the callback that was declared in GoogleMap and passed down as a prop
+    // once loaded, call the callback that was declared in GoogleMap and passed down as a prop
     this.props.initMap();
     this.setState({ scriptLoaded: true });
   }
-
 
   render() {
     return (

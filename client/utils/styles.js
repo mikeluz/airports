@@ -73,6 +73,7 @@ styles.badInputWarning = {
   textAlign: "center",
   backgroundColor: "red",
   color: "white",
+  padding: "2px",
   marginTop: "10px",
   marginBottom: "10px",
 

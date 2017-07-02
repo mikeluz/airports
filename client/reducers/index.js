@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux';
 
 const appReducer = combineReducers({
-  // logged-in user
   airports: require('./airports').default,
 });
 

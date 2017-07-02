@@ -1,5 +1,4 @@
 var expect = require("chai").expect;
-var assert = require("chai").assert;
 var app = require('../app');
 var request = require("supertest")(app);
 
