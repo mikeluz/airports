@@ -29,12 +29,15 @@
     "sequelize": "^4.2.1"
   },
   "devDependencies": {
+    "chai": "^4.0.2",
+    "mocha": "^3.4.2",
     "morgan": "^1.8.2",
+    "supertest": "^3.0.0",
     "webpack": "^3.0.0",
     "webpack-livereload-plugin": "^0.11.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha ./*/*.test.js ./*/*/*.test.js --recursive --watch",
     "start": "node server/start.js",
     "seed": "node db/seed.js",
     "build": "webpack",

@@ -18,7 +18,8 @@ class TryAgain extends React.Component {
     function initMap() {
       map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 40.806862, lng: -96.681679},
-        zoom: 4
+        zoom: 4,
+        mapTypeId: 'satellite'
       });
     }
 

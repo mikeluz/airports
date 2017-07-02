@@ -43,7 +43,7 @@ class Airports extends React.Component {
         evt.target.style.backgroundColor = "yellow";
       });
       document.getElementById('tryAgain').addEventListener('mouseleave', (evt) => {
-        evt.target.style.backgroundColor = "white";
+        evt.target.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
       });
     }
 
@@ -98,7 +98,8 @@ class Airports extends React.Component {
       (function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 40.806862, lng: -96.681679},
-          zoom: 4
+          zoom: 4,
+          mapTypeId: 'satellite'
         });
       }());
 
@@ -190,11 +191,7 @@ class Airports extends React.Component {
   render() {
     return (
       <div id="inputContainer" style={styles.inputContainerStyle}>
-        <h1 style={styles.headerStyle}>{
-          this.state.showTryAgain ? 
-          <button onClick={this.onTryAgainClick.bind(this)} id="tryAgain" style={styles.btnStyle}>TRY AGAIN</button> :
-          <button type="submit" id="tryAgain" onClick={this.plotRoute.bind(this)} style={styles.btnStyle}>CALCULATE</button>
-        }{(this.state.distance > 0) ? `Distance: ${this.state.distance} nautical miles` : `Choose two airports to find the distance between them`}</h1>
+        <h1 style={styles.headerStyle}>{(this.state.distance > 0) ? `Distance: ${this.state.distance} nautical miles` : `Choose two airports to find the distance between them`}</h1>
 
         {this.state.badInput && <h2 id="badInputWarning" style={styles.badInputWarning}>You must select 2 airports!</h2>}
 
@@ -227,6 +224,11 @@ class Airports extends React.Component {
           
           </div>  
         </form>
+        {
+          this.state.showTryAgain ? 
+          <button onClick={this.onTryAgainClick.bind(this)} id="tryAgain" style={styles.btnStyle}>TRY AGAIN</button> :
+          <button type="submit" id="tryAgain" onClick={this.plotRoute.bind(this)} style={styles.btnStyle}>CALCULATE</button>
+        }
       </div>
     )
   }

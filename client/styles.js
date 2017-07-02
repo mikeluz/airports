@@ -5,7 +5,7 @@ styles.table = {
   textAlign: 'center',
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginTop: '20%'
+  marginTop: '28vh'
 };
 
 styles.inputStyle = {
@@ -16,7 +16,7 @@ styles.inputStyle = {
 };
 
 styles.headerStyle = {
-  marginTop: "0px",
+  marginTop: "51px",
   marginBottom: '2px',
   padding: "5px",
   marginLeft: "auto",
@@ -56,9 +56,10 @@ styles.mapContainerStyle = {
 
 styles.btnStyle = {
   padding: "10px",
-  backgroundColor: "white",
-  left: "10%",
-  position: "absolute",
+  backgroundColor: "rgba(255, 255, 255, 0.8)",
+  left: "0%",
+  width: "40%",
+  // position: "absolute",
   border: "none",
   top: "7px",
   bottom: "auto",

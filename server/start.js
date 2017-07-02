@@ -13,7 +13,7 @@ Promise.all([
 	])
 	.then(function () {
 		// turn server on
-		server.listen(3001, function () {
+		server.listen((process.env.PORT || 3001), function () {
 			console.log('Server is listening on port 3001');
 		});
 	})

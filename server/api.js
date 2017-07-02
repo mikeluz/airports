@@ -1,4 +1,3 @@
-// const Promise = require('bluebird');
 const api = module.exports = require('express').Router();
 
 api

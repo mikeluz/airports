@@ -11979,7 +11979,7 @@ styles.table = {
   textAlign: 'center',
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginTop: '20%'
+  marginTop: '28vh'
 };
 
 styles.inputStyle = {
@@ -11990,7 +11990,7 @@ styles.inputStyle = {
 };
 
 styles.headerStyle = {
-  marginTop: "0px",
+  marginTop: "51px",
   marginBottom: '2px',
   padding: "5px",
   marginLeft: "auto",
@@ -12030,9 +12030,10 @@ styles.mapContainerStyle = {
 
 styles.btnStyle = {
   padding: "10px",
-  backgroundColor: "white",
-  left: "10%",
-  position: "absolute",
+  backgroundColor: "rgba(255, 255, 255, 0.8)",
+  left: "0%",
+  width: "40%",
+  // position: "absolute",
   border: "none",
   top: "7px",
   bottom: "auto",
@@ -26662,12 +26663,7 @@ var App = function (_React$Component) {
   function App(props) {
     _classCallCheck(this, App);
 
-    // bind all handlers
-    // this.handlePubClick = this.handlePubClick.bind(this);
-    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
-
-    _this.handleSubmit = _this.handleSubmit.bind(_this);
-    return _this;
+    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
   }
 
   _createClass(App, [{
@@ -26675,14 +26671,6 @@ var App = function (_React$Component) {
     value: function componentWillMount() {
       this.props.getAirports();
     }
-
-    // handlePubClick() {
-    //   this.props.findPubsByName('');
-    // }
-
-  }, {
-    key: 'handleSubmit',
-    value: function handleSubmit() {}
   }, {
     key: 'render',
     value: function render() {
@@ -26698,9 +26686,7 @@ var App = function (_React$Component) {
   return App;
 }(_react2.default.Component);
 
-// export default App
-
-// action creators
+// action creator
 
 
 exports.default = (0, _reactRedux.connect)(function (_ref) {
@@ -26802,7 +26788,7 @@ var Airports = function (_React$Component) {
           evt.target.style.backgroundColor = "yellow";
         });
         document.getElementById('tryAgain').addEventListener('mouseleave', function (evt) {
-          evt.target.style.backgroundColor = "white";
+          evt.target.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
         });
       }
 
@@ -26863,7 +26849,8 @@ var Airports = function (_React$Component) {
         (function initMap() {
           map = new google.maps.Map(document.getElementById('map'), {
             center: { lat: 40.806862, lng: -96.681679 },
-            zoom: 4
+            zoom: 4,
+            mapTypeId: 'satellite'
           });
         })();
 
@@ -26959,15 +26946,6 @@ var Airports = function (_React$Component) {
         _react2.default.createElement(
           'h1',
           { style: _styles2.default.headerStyle },
-          this.state.showTryAgain ? _react2.default.createElement(
-            'button',
-            { onClick: this.onTryAgainClick.bind(this), id: 'tryAgain', style: _styles2.default.btnStyle },
-            'TRY AGAIN'
-          ) : _react2.default.createElement(
-            'button',
-            { type: 'submit', id: 'tryAgain', onClick: this.plotRoute.bind(this), style: _styles2.default.btnStyle },
-            'CALCULATE'
-          ),
           this.state.distance > 0 ? 'Distance: ' + this.state.distance + ' nautical miles' : 'Choose two airports to find the distance between them'
         ),
         this.state.badInput && _react2.default.createElement(
@@ -27020,6 +26998,15 @@ var Airports = function (_React$Component) {
               })
             )
           )
+        ),
+        this.state.showTryAgain ? _react2.default.createElement(
+          'button',
+          { onClick: this.onTryAgainClick.bind(this), id: 'tryAgain', style: _styles2.default.btnStyle },
+          'TRY AGAIN'
+        ) : _react2.default.createElement(
+          'button',
+          { type: 'submit', id: 'tryAgain', onClick: this.plotRoute.bind(this), style: _styles2.default.btnStyle },
+          'CALCULATE'
         )
       );
     }
@@ -29060,7 +29047,8 @@ var GoogleMap = function (_React$Component) {
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: { lat: 40.806862, lng: -96.681679 },
-          zoom: 4
+          zoom: 4,
+          mapTypeId: 'satellite'
         });
       }
       this.setState({
