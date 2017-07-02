@@ -11979,7 +11979,7 @@ styles.table = {
   textAlign: 'center',
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginTop: '28vh'
+  marginTop: '20vh'
 };
 
 styles.inputStyle = {
@@ -12033,7 +12033,7 @@ styles.btnStyle = {
   backgroundColor: "rgba(255, 255, 255, 0.8)",
   left: "0%",
   width: "40%",
-  // position: "absolute",
+  marginTop: "2px",
   border: "none",
   top: "7px",
   bottom: "auto",
@@ -26797,6 +26797,17 @@ var Airports = function (_React$Component) {
           _this2.plotRoute();
         }
       });
+
+      document.addEventListener('input', function (evt) {
+        var showLists = [].slice.call(document.getElementsByTagName('ul'));
+        showLists.forEach(function (ul) {
+          if (ul.children.length > 0) {
+            ul.style.display = "block";
+          } else {
+            ul.style.display = "none";
+          }
+        });
+      });
     }
   }, {
     key: 'plotRoute',
@@ -26900,6 +26911,16 @@ var Airports = function (_React$Component) {
   }, {
     key: 'onDepartSelected',
     value: function onDepartSelected(value) {
+
+      var showLists = [].slice.call(document.getElementsByTagName('ul'));
+      showLists.forEach(function (ul) {
+        if (ul.children.length > 0) {
+          ul.style.display = "block";
+        } else {
+          ul.style.display = "none";
+        }
+      });
+
       this.setState({
         depart: value,
         badInput: false
@@ -26908,6 +26929,16 @@ var Airports = function (_React$Component) {
   }, {
     key: 'onArriveSelected',
     value: function onArriveSelected(value) {
+
+      var showLists = [].slice.call(document.getElementsByTagName('ul'));
+      showLists.forEach(function (ul) {
+        if (ul.children.length > 0) {
+          ul.style.display = "block";
+        } else {
+          ul.style.display = "none";
+        }
+      });
+
       this.setState({
         arrive: value,
         badInput: false
@@ -26923,7 +26954,8 @@ var Airports = function (_React$Component) {
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: { lat: 40.806862, lng: -96.681679 },
-          zoom: 4
+          zoom: 4,
+          mapTypeId: 'satellite'
         });
       }
 

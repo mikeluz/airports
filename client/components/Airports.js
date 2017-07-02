@@ -48,9 +48,20 @@ class Airports extends React.Component {
     }
 
     document.addEventListener('keypress', (evt) => {
-        if (evt.which === 13 && !this.state.badInput && !this.state.distance) {
-          this.plotRoute();
-        }
+      if (evt.which === 13 && !this.state.badInput && !this.state.distance) {
+        this.plotRoute();
+      }
+    });
+
+    document.addEventListener('input', (evt) => {
+      let showLists = [].slice.call(document.getElementsByTagName('ul'));
+        showLists.forEach(ul => {
+          if (ul.children.length > 0) {
+            ul.style.display = "block";
+          } else {
+            ul.style.display = "none";
+          }
+        });
     });
 
   }
@@ -152,6 +163,16 @@ class Airports extends React.Component {
   }
 
   onDepartSelected(value){
+
+    let showLists = [].slice.call(document.getElementsByTagName('ul'));
+      showLists.forEach(ul => {
+        if (ul.children.length > 0) {
+          ul.style.display = "block";
+        } else {
+          ul.style.display = "none";
+        }
+      });
+
     this.setState({
       depart: value,
       badInput: false
@@ -159,6 +180,16 @@ class Airports extends React.Component {
   }
 
   onArriveSelected(value){
+
+    let showLists = [].slice.call(document.getElementsByTagName('ul'));
+      showLists.forEach(ul => {
+        if (ul.children.length > 0) {
+          ul.style.display = "block";
+        } else {
+          ul.style.display = "none";
+        }
+      });
+
     this.setState({
       arrive: value,
       badInput: false
@@ -173,7 +204,8 @@ class Airports extends React.Component {
     function initMap() {
       map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 40.806862, lng: -96.681679},
-        zoom: 4
+        zoom: 4,
+        mapTypeId: 'satellite'
       });
     }
 

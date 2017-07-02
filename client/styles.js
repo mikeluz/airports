@@ -5,7 +5,7 @@ styles.table = {
   textAlign: 'center',
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginTop: '28vh'
+  marginTop: '20vh'
 };
 
 styles.inputStyle = {
@@ -59,7 +59,7 @@ styles.btnStyle = {
   backgroundColor: "rgba(255, 255, 255, 0.8)",
   left: "0%",
   width: "40%",
-  // position: "absolute",
+  marginTop: "2px",
   border: "none",
   top: "7px",
   bottom: "auto",

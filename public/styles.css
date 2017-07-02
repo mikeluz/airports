@@ -30,15 +30,15 @@ input {
 
 ul {
 	font-family: 'Roboto', sans-serif;
-	width: 400px;
 	list-style: none;
 	font-size: 12pt;
 	text-align: left;
 	position: absolute;
 	margin: auto;
-	padding: 0;
+	padding: 5px;
   list-style-type: none;
   background-color: rgba(255, 255, 255, 0.8);
+  display: none;
 }
 
 li {
