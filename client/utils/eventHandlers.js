@@ -36,21 +36,24 @@ const addEventHandlers = (aiportsComponent, bannerClicks) => {
       });
   });
 
-  document.getElementById('banner').addEventListener('click', (evt) => {
-    if (aiportsComponent.state.distance) {
-      ++bannerClicks;
-      if (bannerClicks === 1) {
-        evt.target.innerHTML = `Distance: ${aiportsComponent.state.distance} meters`
+  // check if element exists
+  if (document.getElementById('banner')) {
+    document.getElementById('banner').addEventListener('click', (evt) => {
+      if (aiportsComponent.state.distance) {
+        ++bannerClicks;
+        if (bannerClicks === 1) {
+          evt.target.innerHTML = `Distance: ${aiportsComponent.state.distance} meters`
+        }
+        if (bannerClicks === 2) {
+          evt.target.innerHTML = `Distance: ${aiportsComponent.state.distance * 0.000621371} miles` 
+        }
+        if (bannerClicks === 3) {
+          evt.target.innerHTML = `Distance: ${aiportsComponent.state.distance * 0.000539957} nautical miles` 
+          bannerClicks = 0;
+        }
       }
-      if (bannerClicks === 2) {
-        evt.target.innerHTML = `Distance: ${aiportsComponent.state.distance * 0.000621371} miles` 
-      }
-      if (bannerClicks === 3) {
-        evt.target.innerHTML = `Distance: ${aiportsComponent.state.distance * 0.000539957} nautical miles` 
-        bannerClicks = 0;
-      }
-    }
-  });
+    });
+  }
 
 };
 
