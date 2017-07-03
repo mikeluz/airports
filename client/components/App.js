@@ -4,6 +4,10 @@ import axios from 'axios';
 import Airports from './Airports';
 import GoogleMap from './GoogleMap';
 
+import { drawMap } from '../utils/mapUtils.js';
+
+import store from '../store';
+
 class App extends React.Component {
 
   constructor(props) {
@@ -11,24 +15,17 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    this.props.getAirports();
+    store.dispatch(this.props.getAirports());
   }
 
   render() {
     return (
       <div>
-        <Airports/>
-        <GoogleMap/>
+        <Airports />
+        <GoogleMap initMap={drawMap} />
       </div>
     )
   }
 }
 
-import {connect} from 'react-redux'
-
-// action creator
-import {getAirports} from '../reducers/airports'
-
-export default connect(
-  ({}) => ({}), {getAirports},
-)(App)
+export default App;

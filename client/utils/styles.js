@@ -5,7 +5,7 @@ styles.table = {
   textAlign: 'center',
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginTop: '20vh'
+  marginTop: '18vh'
 };
 
 styles.inputStyle = {

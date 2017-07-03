@@ -1,11 +1,8 @@
 import React from 'react';
-import axios from 'axios';
-
 import MapScript from './MapScript';
 
 // utils
 import styles from '../utils/styles.js';
-import { drawMap } from '../utils/mapUtils.js';
 
 class GoogleMap extends React.Component {
 
@@ -19,7 +16,7 @@ class GoogleMap extends React.Component {
   componentDidMount() {
     this.setState({
       // set state with initMap callback to be called once map script has loaded the maps API
-      initMap: drawMap()
+      initMap: this.props.initMap()
     });
   }
 
@@ -34,7 +31,5 @@ class GoogleMap extends React.Component {
     )
   }
 }
-
-import {connect} from 'react-redux';
 
 export default GoogleMap;
