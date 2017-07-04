@@ -37,6 +37,7 @@
     "enzyme-redux": "^0.1.6",
     "jsdom": "^11.1.0",
     "jsdom-global": "^3.0.2",
+    "load-google-maps-api": "^1.0.0",
     "mocha": "^3.4.2",
     "morgan": "^1.8.2",
     "react-test-renderer": "^15.6.1",

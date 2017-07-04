@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-import Airports from './Airports';
+import AirportsContainer from './AirportsContainer';
 import GoogleMap from './GoogleMap';
 
 import { drawMap } from '../utils/mapUtils.js';
@@ -21,7 +21,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Airports />
+        <AirportsContainer />
         <GoogleMap initMap={drawMap} />
       </div>
     )

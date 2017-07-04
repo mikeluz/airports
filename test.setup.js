@@ -1,7 +1,9 @@
 require('babel-register')();
 
  const { JSDOM } = require('jsdom');
- const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
+ const jsdom = new JSDOM(`<body>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJJ4zQXgdDc2gJfyGy746iBpoGBgSbdp8"></script>
+</body>`, { runScripts: "dangerously" });
  const { window } = jsdom;
  
  function copyProps(src, target) {

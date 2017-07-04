@@ -11,7 +11,7 @@ const getsAllLargeAirports = (res) => {
 
 describe("API: ", () => {
 
-	describe("Airports GET", () => {
+	describe("GET /airports", () => {
 
 		it("Should return a 200 response", function(done) {
 			request

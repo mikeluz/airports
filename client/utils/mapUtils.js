@@ -1,14 +1,16 @@
-const drawMap = () => {
+import geolib from 'geolib';
 
-	let map;
-  return function initMap(createMap) {
-    map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: 44.375163, lng: -100.319996},
-      zoom: 4,
-      mapTypeId: 'satellite'
-    });
-    return map;
-  };
+const drawMap = () => {
+  
+    let map;
+    return function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 44.375163, lng: -100.319996},
+          zoom: 4,
+          mapTypeId: 'satellite'
+        });
+        return map;
+    };
 
 };
 
@@ -31,7 +33,7 @@ const generateInfoWindow = airport => {
 };
 
 const drawMarkersAndRoute = (map, depart, arrive) => {
-  // 2. draw markers ////////////////
+  // 1. draw markers ////////////////
   let departMarkerCoors = {lat: Number(depart.latitude_deg), lng: Number(depart.longitude_deg)};
   let arriveMarkerCoors = {lat: Number(arrive.latitude_deg), lng: Number(arrive.longitude_deg)};
 
@@ -46,12 +48,12 @@ const drawMarkersAndRoute = (map, depart, arrive) => {
   departMarker.setMap(map);
   arriveMarker.setMap(map);
 
-  // // 3. create info windows ///////////////
+  // // 2. create info windows ///////////////
   generateInfoWindow(depart).open(map, departMarker);
   generateInfoWindow(arrive).open(map, arriveMarker);
   // /////////////////////////////////////
 
-  // // 4. draw route using Polyline -- no "FLIGHT" travel option in directions service :(
+  // // 3. draw route using Polyline -- no "FLIGHT" travel option in directions service :(
   let line = new google.maps.Polyline({
     path: [
         departMarkerCoors, 
@@ -64,10 +66,44 @@ const drawMarkersAndRoute = (map, depart, arrive) => {
     map: map
   }); 
 
-}
+};
+
+const chooseAirports = (airports, depart, arrive) => {
+
+  // get DEPART airport from store
+  let [departAirport] = airports.filter(airport => {
+    if (airport.name === depart) {
+      return airport;
+    }
+  });
+  // build DEPART coordinates object
+  let departCoors = {
+    latitude: departAirport.latitude_deg,
+    longitude: departAirport.longitude_deg
+  };
+
+  // get ARRIVE object from store
+  let [arriveAirport] = airports.filter(airport => {
+    if (airport.name === arrive) {
+      return airport;
+    }
+  });
+  // build ARRIVE coordinates object
+  let arriveCoors = {
+    latitude: arriveAirport.latitude_deg,
+    longitude: arriveAirport.longitude_deg
+  };
+
+  // get distance in meters with geolib npm module
+  let distance = geolib.getDistance(departCoors, arriveCoors);
+
+  return [departAirport, departCoors, arriveAirport, arriveCoors, distance];
+
+};
 
 module.exports = {
 	drawMap,
 	generateInfoWindow,
-  drawMarkersAndRoute
+  drawMarkersAndRoute,
+  chooseAirports
 };

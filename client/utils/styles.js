@@ -5,7 +5,8 @@ styles.table = {
   textAlign: 'center',
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginTop: '18vh'
+  marginTop: '18vh',
+  marginBottom: '1px'
 };
 
 styles.inputStyle = {
@@ -37,8 +38,7 @@ styles.inputContainerStyle = {
   position: "relative",
   margin: "auto",
   width: "100%",
-  backgroundColor: "rgba(252, 123, 42, 0.1)",
-  zIndex: "5"
+  zIndex: "5",
 };
 
 styles.mapStyle = {
@@ -62,7 +62,6 @@ styles.btnStyle = {
   marginTop: "2px",
   border: "none",
   top: "7px",
-  bottom: "auto",
   borderRadius: "20px"
 };
 
