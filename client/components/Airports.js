@@ -1,13 +1,13 @@
 import React from 'react';
 import axios from 'axios';
 
+// predictive text component: notes I had to customize this module, hence it being included in the project
 import Autocomplete from 'react-predictive-input';
 
 // utils
 import styles from '../utils/styles.js';
-import { drawMap, generateInfoWindow, drawMarkersAndRoute, chooseAirports } from '../utils/mapUtils.js';
-import addEventHandlers from '../utils/eventHandlers.js';
-import { togglePredictions, hideAndClearInputs } from '../utils/inputUtils.js';
+
+import store from '../store';
 
 // click tracker for header toggle
 let bannerClicks = 0;
@@ -21,15 +21,19 @@ class Airports extends React.Component {
       depart: "",
       arrive: "",
       showTryAgain: false,
-      badInput: false
+      badInput: false,
+      departMarker: {},
+      arriveMarker: {},
+      route: {}
     };
   }
 
   componentDidMount() {
-    addEventHandlers(this, bannerClicks);
+    this.props.utils.addInputEventListeners();
   }
 
   plotRoute(evt) {
+
     // validate input -- if depart or arrive are not defined or are the same, set badInput to false
     if (!this.state.depart || !this.state.arrive || (this.state.depart === this.state.arrive)) {
       this.setState({
@@ -37,14 +41,14 @@ class Airports extends React.Component {
       });
     } else { // input is good, plot route
 
-      // get needed values from chooseAirports util function
-      const [departAirport, departCoors, arriveAirport, arriveCoors, distance] = chooseAirports(this.props.airports, this.state.depart, this.state.arrive);
-      
-      // redraw map to capture reference to it
-      let map = drawMap()();
+      // get needed values with chooseAirports util function
+      const [departAirport, departCoors, arriveAirport, arriveCoors, distance] = this.props.utils.chooseAirports(this.props.airports, this.state.depart, this.state.arrive);
+
+      // grab mapRef from store
+      let map = store.getState().map;
       // draw markers and route
-      drawMarkersAndRoute(map, departAirport, arriveAirport);
-      hideAndClearInputs();
+      let {departMarker, arriveMarker, route} = this.props.utils.drawMarkersAndRoute(map, departAirport, arriveAirport) || {};
+      this.props.utils.hideAndClearInputs();
 
       // set state distance, clear depart and arrive airports
       this.setState({
@@ -52,7 +56,10 @@ class Airports extends React.Component {
         showTryAgain: true,
         depart: "",
         arrive: "",
-        badInput: false
+        badInput: false,
+        departMarker: departMarker,
+        arriveMarker: arriveMarker,
+        route: route
       });
     }
 
@@ -61,7 +68,7 @@ class Airports extends React.Component {
   // handle selections -- see AutoComplete component
   onDepartSelected(value){
     if (value) {
-      togglePredictions();
+      this.props.utils.togglePredictions();
       this.setState({
         depart: value,
         badInput: false
@@ -72,7 +79,7 @@ class Airports extends React.Component {
   // handle selections -- see AutoComplete component
   onArriveSelected(value){
     if (value) {
-      togglePredictions();
+      this.props.utils.togglePredictions();
       this.setState({
         arrive: value,
         badInput: false
@@ -90,24 +97,20 @@ class Airports extends React.Component {
   }
 
   bannerClickHandler(evt) {
-    if (this.state.distance) {
-      ++bannerClicks;
-      if (bannerClicks === 1) {
-        evt.target.innerHTML = `Distance: ${this.state.distance} meters`
-      }
-      if (bannerClicks === 2) {
-        evt.target.innerHTML = `Distance: ${this.state.distance * 0.000621371} miles` 
-      }
-      if (bannerClicks === 3) {
-        evt.target.innerHTML = `Distance: ${this.state.distance * 0.000539957} nautical miles` 
-        bannerClicks = 0;
-      }
-    }
+    bannerClicks = this.props.utils.toggleDistance(evt, this.state.distance, bannerClicks);
   }
 
   onTryAgainClick() {
-    
-    // REMOVE MARKERS AND INFO WINDOWS ?
+    // clear markers and route
+    this.props.utils.clearMarkersAndRoute(this.state.departMarker, this.state.arriveMarker, this.state.route);
+    // reset map to default center and zoom
+    let map = store.getState().map || null;
+
+    // for testing: check if map is not null
+    if (map) {
+      map.setCenter({lat: 45.375163, lng: -98.319996});
+      map.setZoom(4);
+    }
 
     // clear state
     this.setState({
@@ -137,6 +140,7 @@ class Airports extends React.Component {
           <form>
             <div style={styles.table}>
 
+              {/* DEPART */}
               <div id="depart-div" style={styles.inputStyle}>
                 <h1 style={styles.headerStyle}>Depart</h1>
                 <Autocomplete
@@ -148,7 +152,8 @@ class Airports extends React.Component {
                 reload={this.state.showTryAgain}
                 ></Autocomplete>
               </div>
-            
+
+              {/* ARRIVE */}
               <div id="arrive-div" style={styles.inputStyle}>
                 <h1 style={styles.headerStyle}>Arrive</h1>
                 <Autocomplete

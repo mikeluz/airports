@@ -3,6 +3,8 @@ import axios from 'axios';
 
 import Script from 'react-load-script';
 
+import store from '../store';
+
 class MapScript extends React.Component {
 
   constructor(props) {
@@ -22,8 +24,12 @@ class MapScript extends React.Component {
   }
    
   handleScriptLoad() {
-    // once loaded, call the callback that was declared in GoogleMap and passed down as a prop
-    this.props.initMap();
+    // once loaded, call the callback that was declared in GoogleMap and passed down as a prop and put ref to the map on store
+    let mapRefStore = this.props.initMap();
+    // for testing: check if has received setMap
+    if (this.props.setMap) {
+      store.dispatch(this.props.setMap(mapRefStore));
+    }
     this.setState({ scriptLoaded: true });
   }
 

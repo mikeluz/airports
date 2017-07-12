@@ -76,6 +76,6 @@ styles.badInputWarning = {
   marginTop: "10px",
   marginBottom: "10px",
 
-}
+};
 
 module.exports = styles;

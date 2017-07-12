@@ -4,8 +4,10 @@ const Promise = require('bluebird');
 const db = require('../db/models');
 const Airport = require('../db/models/airport');
 
-// removed balloonports, heliports, and closed ports
-const csvFilePath = __dirname + '/us-airports-clean.csv';
+// 'us-airports-clean-no-small' -- no balloonports, heliports, closed ports, or small airports
+// small airports was removed to ensure the db seeded completely without timeout. 
+// I got it to seed once but it wasn't reliable.
+const csvFilePath = __dirname + '/us-airports-clean-no-small.csv';
 const csv = require('csvtojson');
 
 const getAirportsFromCSV = () => {
@@ -34,13 +36,10 @@ const airportSeed = new Promise((res, rej) => {
     db.sync({force: true})
     .then(function () {
       console.log("Dropped old data, now inserting data");
-      // return Promise.map(airports, function (airports) {
-        // Airport.bulkCreate(airports)
         return Promise.map(airportsFromCSV, function (row) {
           return Airport
           .create(row);
         });
-      // });
     })
     .then(function () {
       console.log("Finished inserting data");
@@ -53,6 +52,6 @@ const airportSeed = new Promise((res, rej) => {
       console.log('connection closed'); // the connection eventually closes, we just manually do so to end the process quickly
       return null; // silences bluebird warning about using non-returned promises inside of handlers.
     });
-  })
+  });
 });
 

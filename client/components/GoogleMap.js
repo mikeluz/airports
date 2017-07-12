@@ -4,6 +4,9 @@ import MapScript from './MapScript';
 // utils
 import styles from '../utils/styles.js';
 
+// action creator
+import {setMap} from '../reducers/map';
+
 class GoogleMap extends React.Component {
 
   constructor(props) {
@@ -25,7 +28,7 @@ class GoogleMap extends React.Component {
       <div id="map-container" style={styles.mapContainerStyle}>
         <div id="map" style={styles.mapStyle}></div>
         {
-          (typeof this.state.initMap === 'function') ? <MapScript initMap={this.state.initMap}/> : <h1>Oops, something went wrong.</h1>
+          (typeof this.state.initMap === 'function') ? <MapScript initMap={this.state.initMap} setMap={setMap}/> : <h1>Oops, something went wrong.</h1>
         }
       </div>
     )
